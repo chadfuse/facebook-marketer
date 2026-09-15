@@ -1,0 +1,74 @@
+{
+  "niches": [
+    {
+      "id": "niche-hvac-ny",
+      "name": "HVAC Company New York",
+      "keyword": "hvac company new york",
+      "industry": "HVAC & Climate Control",
+      "location": "New York, NY",
+      "specificAngle": "Emergency 24/7 heating/cooling call capture and mobile booking page speed",
+      "createdAt": "2026-09-15T15:26:13.053Z",
+      "updatedAt": "2026-09-15T15:26:13.054Z"
+    },
+    {
+      "id": "niche-dentist-fl",
+      "name": "Dental Clinic Florida",
+      "keyword": "dentist clinic florida",
+      "industry": "Dental & Healthcare",
+      "location": "Florida",
+      "specificAngle": "Online patient appointment booking and modern clean trust-building UI",
+      "createdAt": "2026-09-15T15:26:13.054Z",
+      "updatedAt": "2026-09-15T15:26:13.054Z"
+    },
+    {
+      "id": "niche-roofing-tx",
+      "name": "Roofing Contractors Texas",
+      "keyword": "roofing contractors texas",
+      "industry": "Roofing & Construction",
+      "location": "Texas",
+      "specificAngle": "Free instant roof estimate calculators and storm-damage lead funnels",
+      "createdAt": "2026-09-15T15:26:13.054Z",
+      "updatedAt": "2026-09-15T15:26:13.054Z"
+    }
+  ],
+  "groups": [],
+  "postQueue": [],
+  "postHistory": [],
+  "logs": [
+    {
+      "id": "log-1789486021050-ej8tm",
+      "timestamp": "2026-09-15T15:27:01.050Z",
+      "type": "warn",
+      "message": "Not logged into Facebook or session expired.",
+      "details": {}
+    },
+    {
+      "id": "log-1789485973069-axymk",
+      "timestamp": "2026-09-15T15:26:13.069Z",
+      "type": "warn",
+      "message": "Gemini API Key not set. Generating high-converting template fallback.",
+      "details": {}
+    },
+    {
+      "id": "log-1789485973068-8njnp",
+      "timestamp": "2026-09-15T15:26:13.068Z",
+      "type": "warn",
+      "message": "Gemini API Key not set. Generating high-converting template fallback.",
+      "details": {}
+    },
+    {
+      "id": "log-1789485973067-y6exl",
+      "timestamp": "2026-09-15T15:26:13.067Z",
+      "type": "warn",
+      "message": "Gemini API Key not set. Generating high-converting template fallback.",
+      "details": {}
+    },
+    {
+      "id": "log-1789485973066-ay5pn",
+      "timestamp": "2026-09-15T15:26:13.067Z",
+      "type": "warn",
+      "message": "Gemini API Key not set. Generating high-converting template fallback.",
+      "details": {}
+    }
+  ]
+}

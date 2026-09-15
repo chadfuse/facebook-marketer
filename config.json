@@ -1,0 +1,12 @@
+{
+  "geminiApiKey": "",
+  "portfolioUrl": "https://myportfolio.dev",
+  "dailyPostLimit": 5,
+  "minDelayBetweenPostsMinutes": 20,
+  "maxDelayBetweenPostsMinutes": 45,
+  "dailyJoinLimit": 5,
+  "minDelayBetweenJoinsMinutes": 10,
+  "headless": true,
+  "targetService": "High-Converting Custom Web Development & Fast Landing Pages",
+  "autoApprovePosts": false
+}

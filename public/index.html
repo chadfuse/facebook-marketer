@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FB Marketer & AI Auto-Poster | Web Development Outreach</title>
+  <meta name="description" content="AI-Powered Facebook Group Niche Marketer & Auto-Poster for Web Development Services">
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<div class="app-container">
+  
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="brand-section">
+      <div class="brand-icon">⚡</div>
+      <div class="brand-text">
+        <h1>FB Marketer AI</h1>
+        <p>Client Acquisition Suite</p>
+      </div>
+    </div>
+
+    <nav class="nav-menu">
+      <a class="nav-item active" data-view="overview">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        Overview
+      </a>
+      <a class="nav-item" data-view="niches">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+        Target Niches
+      </a>
+      <a class="nav-item" data-view="groups">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Group Discovery
+      </a>
+      <a class="nav-item" data-view="studio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+        Gemini AI Studio
+      </a>
+      <a class="nav-item" data-view="queue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+        Queue & Poster
+      </a>
+      <a class="nav-item" data-view="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        Settings & Auth
+      </a>
+      <a class="nav-item" data-view="logs">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+        Activity Logs
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="auth-badge">
+        <div class="status-dot" id="auth-status-dot"></div>
+        <span id="auth-status-text">Checking FB Auth...</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Wrapper -->
+  <div class="main-wrapper">
+    <!-- Header -->
+    <header class="top-bar">
+      <div class="page-title">
+        <h2 id="view-title">Marketing Command Center</h2>
+        <p id="view-desc">Real-time overview of Facebook groups, outreach queue, and performance.</p>
+      </div>
+      <div class="top-actions">
+        <button class="btn btn-secondary btn-sm" onclick="switchView('settings')">⚙️ Settings</button>
+        <button class="btn btn-primary btn-sm" onclick="openNicheModal()">+ Add Niche</button>
+      </div>
+    </header>
+
+    <!-- Main Content Body -->
+    <main class="content-body">
+
+      <!-- VIEW 1: OVERVIEW -->
+      <section class="view-panel active" id="view-overview">
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Target Niches</span>
+              <span>🎯</span>
+            </div>
+            <div class="stat-value" id="stat-niches">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Total Groups</span>
+              <span>👥</span>
+            </div>
+            <div class="stat-value" id="stat-groups">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Joined Groups</span>
+              <span class="stat-badge badge-joined">Ready</span>
+            </div>
+            <div class="stat-value" id="stat-joined" style="color:var(--accent-emerald);">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Pending Joins</span>
+              <span class="stat-badge badge-pending">Waiting</span>
+            </div>
+            <div class="stat-value" id="stat-pending" style="color:var(--accent-amber);">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Posts in Queue</span>
+              <span>⏰</span>
+            </div>
+            <div class="stat-value" id="stat-queued">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <span>Posts Today</span>
+              <span class="stat-badge badge-discovered">Safety Limit</span>
+            </div>
+            <div class="stat-value" id="stat-today">0 / 5</div>
+          </div>
+        </div>
+
+        <!-- Strategy Box -->
+        <div class="card" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(6, 182, 212, 0.05)); border-color: rgba(99, 102, 241, 0.3);">
+          <div class="card-title" style="color: #fff;">
+            <span>💡 4-Step Client Acquisition Engine</span>
+          </div>
+          <p style="color: var(--text-secondary); margin-top: 8px; font-size: 0.92rem; line-height: 1.6;">
+            1. <strong>Add Niches</strong> (e.g. <em>"HVAC Company New York"</em>, <em>"Dentists Florida"</em>).<br>
+            2. <strong>Auto-Discover & Join</strong> relevant active Facebook groups.<br>
+            3. <strong>Generate High-Converting Pitches</strong> via Gemini using the <em>Free Website Audit</em> or <em>Case Study</em> frameworks.<br>
+            4. <strong>Queue or Post</strong> with human typing delays to safeguard your Facebook account.
+          </p>
+          <div style="margin-top: 16px; display: flex; gap: 10px;">
+            <button class="btn btn-primary btn-sm" onclick="switchView('studio')">✨ Open Gemini AI Studio</button>
+            <button class="btn btn-secondary btn-sm" onclick="switchView('groups')">🔍 Find FB Groups</button>
+          </div>
+        </div>
+
+        <!-- Recent Posts Table -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Recent Published Posts</h3>
+            <button class="btn btn-secondary btn-sm" onclick="switchView('queue')">View Full Queue & History &rarr;</button>
+          </div>
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Target Group</th>
+                <th>Niche</th>
+                <th>Date / Time</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="recent-posts-list">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VIEW 2: NICHES -->
+      <section class="view-panel" id="view-niches">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Configured Niches & Search Angles</h3>
+            <button class="btn btn-primary" onclick="openNicheModal()">+ Add New Niche</button>
+          </div>
+          <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:20px;">
+            Define the exact industries and regional markets you want to acquire web development clients in.
+          </p>
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Niche / Industry</th>
+                <th>FB Search Keyword</th>
+                <th>Custom Offer Angle</th>
+                <th>Group Stats</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="niches-table-body">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VIEW 3: GROUPS DISCOVERY -->
+      <section class="view-panel" id="view-groups">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Facebook Group Discovery & Auto-Joiner</h3>
+          </div>
+          
+          <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; align-items: flex-end;">
+            <div style="flex: 1; min-width: 240px;">
+              <label class="form-label">Search for Niche Groups:</label>
+              <select class="form-select" id="search-niche-select">
+                <!-- Dynamic options -->
+              </select>
+            </div>
+            <button class="btn btn-primary" id="btn-run-group-search" onclick="executeGroupSearch(document.getElementById('search-niche-select').value)">
+              🔍 Search FB Groups
+            </button>
+          </div>
+
+          <div style="display: flex; gap: 12px; margin-bottom: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+            <div style="display: flex; gap: 12px;">
+              <select class="form-select" id="group-filter-niche" style="width: auto;">
+                <option value="">All Niches</option>
+              </select>
+              <select class="form-select" id="group-filter-status" style="width: auto;">
+                <option value="">All Statuses</option>
+                <option value="joined">Joined</option>
+                <option value="join_requested">Pending Approval</option>
+                <option value="discovered">Discovered</option>
+              </select>
+            </div>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">
+              Tip: Facebook recommends max 5-10 group joins per day to prevent verification challenges.
+            </span>
+          </div>
+
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Group Name</th>
+                <th>Niche</th>
+                <th>Members</th>
+                <th>Privacy</th>
+                <th>Join Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="groups-table-body">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VIEW 4: GEMINI AI STUDIO -->
+      <section class="view-panel" id="view-studio">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">✨ Gemini AI Outreach Copy Generator</h3>
+          </div>
+
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px;">
+            Select a proven marketing framework to generate high-converting, non-spammy messages that attract local business owners.
+          </p>
+
+          <!-- Framework Selector -->
+          <label class="form-label" style="margin-bottom: 10px;">Select Proven Marketing Framework:</label>
+          <div class="framework-grid" id="frameworks-container">
+            <!-- Framework cards rendered dynamically -->
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 20px;">
+            <div class="form-group">
+              <label class="form-label">Target Niche Context:</label>
+              <select class="form-select" id="studio-niche-select">
+                <!-- Options -->
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Portfolio / Case Study URL:</label>
+              <input type="text" class="form-input" id="studio-portfolio-input" placeholder="https://myportfolio.dev">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Number of Variations:</label>
+              <select class="form-select" id="studio-count-select">
+                <option value="1">1 Unique Post</option>
+                <option value="2">2 Variations</option>
+                <option value="3" selected>3 Variations (Recommended)</option>
+                <option value="5">5 Variations</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Custom Angles or Specific Offer Instructions (Optional):</label>
+            <textarea class="form-textarea" id="studio-custom-prompt" placeholder="e.g. Mention that we build with Next.js for sub-second speeds and include a 14-day delivery guarantee."></textarea>
+          </div>
+
+          <button class="btn btn-primary" id="btn-generate-ai" onclick="generateAiPosts()" style="width: 100%; padding: 14px; font-size: 1rem;">
+            ✨ Generate Tailored Posts with Gemini
+          </button>
+        </div>
+
+        <!-- Generated Output Section -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Generated Post Variations</h3>
+          </div>
+          <div id="generated-posts-container">
+            <div style="text-align: center; color: var(--text-muted); padding: 30px;">
+              No posts generated yet. Choose a framework above and click "Generate Tailored Posts"!
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 5: QUEUE & SCHEDULER -->
+      <section class="view-panel" id="view-queue">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Automated Post Queue</h3>
+            <button class="btn btn-emerald" id="btn-run-queue-now" onclick="triggerProcessQueueNow()">
+              ⚡ Post Next Queue Item Now
+            </button>
+          </div>
+
+          <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: var(--radius-md); padding: 14px; margin-bottom: 20px; font-size: 0.88rem; color: #fde68a;">
+            🛡️ <strong>Anti-Ban Safety Guard</strong>: Posts are automatically spaced out by 15-45 minutes with randomized human typing speed and scrolling simulations.
+          </div>
+
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Target Group</th>
+                <th>Content Preview</th>
+                <th>Scheduled Time</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="queue-table-body">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Post History Log</h3>
+          </div>
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Target Group</th>
+                <th>Niche</th>
+                <th>Content Preview</th>
+                <th>Posted Date / Time</th>
+              </tr>
+            </thead>
+            <tbody id="history-table-body">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VIEW 6: SETTINGS & AUTH -->
+      <section class="view-panel" id="view-settings">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">🔐 Facebook Authentication & Session</h3>
+          </div>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px;">
+            You can authenticate either via local browser window or by importing session cookies (perfect for Render or cloud servers).
+          </p>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 20px;">
+            <!-- Option 1: Local Window -->
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px;">
+              <h4 style="color:#fff; margin-bottom: 8px;">Option 1: Interactive Browser Login (Local)</h4>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
+                Opens a real Chrome window. Log in to Facebook normally (with 2FA) and your session will be saved automatically.
+              </p>
+              <button class="btn btn-primary" id="btn-login-assistant" onclick="triggerLoginAssistant()">
+                🔑 Launch Local Login Window
+              </button>
+            </div>
+
+            <!-- Option 2: Cookie Import -->
+            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px;">
+              <h4 style="color:#fff; margin-bottom: 8px;">Option 2: Import FB Cookies (Render / Cloud)</h4>
+              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 12px;">
+                Export cookies from your browser (via Cookie-Editor extension) and paste JSON here:
+              </p>
+              <textarea class="form-textarea" id="import-cookies-text" placeholder='[{"name":"c_user","value":"..."},{"name":"xs","value":"..."}]' style="min-height: 80px; font-family: monospace; font-size: 0.8rem;"></textarea>
+              <button class="btn btn-secondary btn-sm" style="margin-top: 10px;" onclick="triggerImportCookies()">
+                📥 Import Cookies JSON
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">⚙️ App & AI Configuration</h3>
+          </div>
+
+          <form id="settings-form">
+            <div class="form-group">
+              <label class="form-label">Google Gemini API Key:</label>
+              <input type="password" class="form-input" id="config-gemini-key" placeholder="AIzaSy...">
+              <small style="color:var(--text-muted); font-size:0.78rem;">Get a free API key at <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--accent-cyan);">aistudio.google.com</a>. Fallback templates are used if left blank.</small>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Default Portfolio / Case Study URL:</label>
+              <input type="text" class="form-input" id="config-portfolio-url" placeholder="https://myportfolio.dev">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Core Web Development Service Description:</label>
+              <input type="text" class="form-input" id="config-target-service" placeholder="High-Converting Custom Web Development & Fast Landing Pages">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Daily Post Safety Limit:</label>
+              <input type="number" class="form-input" id="config-daily-post-limit" min="1" max="15" value="5">
+              <small style="color:var(--text-muted); font-size:0.78rem;">Maximum number of automated posts across all groups per 24 hours.</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary">💾 Save Configuration</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- VIEW 7: LOGS -->
+      <section class="view-panel" id="view-logs">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Live Automation Event Logs</h3>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-secondary btn-sm" onclick="refreshLogs()">🔄 Refresh</button>
+              <button class="btn btn-danger btn-sm" onclick="clearSystemLogs()">🗑️ Clear Logs</button>
+            </div>
+          </div>
+          <div class="log-stream" id="log-stream-container">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ======================================================= -->
+<!-- MODALS -->
+<!-- ======================================================= -->
+
+<!-- Niche Modal -->
+<div class="modal-overlay" id="niche-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 class="modal-title" id="niche-modal-title">Add New Target Niche</h3>
+      <button class="close-btn close-modal-btn">&times;</button>
+    </div>
+    <form id="niche-form">
+      <div class="form-group">
+        <label class="form-label">Niche Display Name *</label>
+        <input type="text" class="form-input" id="niche-form-name" placeholder="e.g. HVAC Company New York" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Facebook Search Keyword *</label>
+        <input type="text" class="form-input" id="niche-form-keyword" placeholder="e.g. hvac company new york" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Industry Category</label>
+        <input type="text" class="form-input" id="niche-form-industry" placeholder="e.g. HVAC & Climate Services">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Location / Target City</label>
+        <input type="text" class="form-input" id="niche-form-location" placeholder="e.g. New York, NY">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Specific Pitch Angle / Pain Points</label>
+        <textarea class="form-textarea" id="niche-form-angle" placeholder="e.g. Emergency 24/7 call booking buttons and 1-second mobile load speeds"></textarea>
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+        <button type="button" class="btn btn-secondary close-modal-btn">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Niche</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Schedule to Queue Modal -->
+<div class="modal-overlay" id="queue-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 class="modal-title">Add Post to Automation Queue</h3>
+      <button class="close-btn close-modal-btn">&times;</button>
+    </div>
+    <form id="queue-form">
+      <div class="form-group">
+        <label class="form-label">Select Target Group *</label>
+        <select class="form-select" id="queue-group-select" required>
+          <!-- Populated -->
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Post Content</label>
+        <textarea class="form-textarea" id="queue-post-content" style="min-height: 180px;" required></textarea>
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+        <button type="button" class="btn btn-secondary close-modal-btn">Cancel</button>
+        <button type="submit" class="btn btn-primary">Add to Queue</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Direct Post Modal -->
+<div class="modal-overlay" id="direct-post-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 class="modal-title">Direct Post to Facebook Group</h3>
+      <button class="close-btn close-modal-btn">&times;</button>
+    </div>
+    <form id="direct-post-form">
+      <div class="form-group">
+        <label class="form-label">Select Target Group *</label>
+        <select class="form-select" id="direct-post-group-select" required>
+          <!-- Populated -->
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Post Content</label>
+        <textarea class="form-textarea" id="direct-post-content" style="min-height: 180px;" required></textarea>
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+        <button type="button" class="btn btn-secondary close-modal-btn">Cancel</button>
+        <button type="submit" class="btn btn-emerald" id="btn-submit-direct-post">🚀 Publish Now</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
+
+<!-- Client Scripts -->
+<script src="/js/api.js"></script>
+<script src="/js/app.js"></script>
+
+</body>
+</html>

@@ -36,6 +36,34 @@
   "postHistory": [],
   "logs": [
     {
+      "id": "log-1789487388597-gd5u3",
+      "timestamp": "2026-09-15T15:49:48.597Z",
+      "type": "warn",
+      "message": "Gemini API Key not set. Generating high-converting template fallback.",
+      "details": {}
+    },
+    {
+      "id": "log-1789487388596-a5ong",
+      "timestamp": "2026-09-15T15:49:48.596Z",
+      "type": "warn",
+      "message": "Gemini API Key not set. Generating high-converting template fallback.",
+      "details": {}
+    },
+    {
+      "id": "log-1789487388596-pwxvi",
+      "timestamp": "2026-09-15T15:49:48.596Z",
+      "type": "warn",
+      "message": "Gemini API Key not set. Generating high-converting template fallback.",
+      "details": {}
+    },
+    {
+      "id": "log-1789487388594-9a7jb",
+      "timestamp": "2026-09-15T15:49:48.594Z",
+      "type": "warn",
+      "message": "Gemini API Key not set. Generating high-converting template fallback.",
+      "details": {}
+    },
+    {
       "id": "log-1789486021050-ej8tm",
       "timestamp": "2026-09-15T15:27:01.050Z",
       "type": "warn",

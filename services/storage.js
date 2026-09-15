@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { isSupabaseConfigured, fetchSupabaseDoc, saveSupabaseDoc } = require('./supabase');
 
 const DATA_DIR = path.join(__dirname, '..', 'data');
 const DB_FILE = path.join(DATA_DIR, 'database.json');
@@ -50,15 +51,57 @@ const defaultDB = {
   logs: []
 };
 
-// Initialize DB if not present
+// In-memory cache
+let cachedDB = null;
+let cachedConfig = null;
+let cachedSession = null;
+
+// Initialize DB locally if not present
 if (!fs.existsSync(DB_FILE)) {
   fs.writeFileSync(DB_FILE, JSON.stringify(defaultDB, null, 2), 'utf-8');
 }
 
+/**
+ * Sync from Supabase on startup if configured
+ */
+async function syncFromSupabase() {
+  if (!isSupabaseConfigured()) return;
+
+  try {
+    console.log('[SUPABASE] Checking remote cloud database...');
+    const remoteDB = await fetchSupabaseDoc('database');
+    if (remoteDB && typeof remoteDB === 'object') {
+      cachedDB = remoteDB;
+      fs.writeFileSync(DB_FILE, JSON.stringify(remoteDB, null, 2), 'utf-8');
+      console.log('[SUPABASE] Synced database successfully from Supabase!');
+    }
+
+    const remoteConfig = await fetchSupabaseDoc('config');
+    if (remoteConfig && typeof remoteConfig === 'object') {
+      cachedConfig = remoteConfig;
+      fs.writeFileSync(CONFIG_FILE, JSON.stringify(remoteConfig, null, 2), 'utf-8');
+    }
+
+    const remoteSession = await fetchSupabaseDoc('session');
+    if (remoteSession && typeof remoteSession === 'object') {
+      cachedSession = remoteSession;
+      fs.writeFileSync(SESSION_FILE, JSON.stringify(remoteSession, null, 2), 'utf-8');
+    }
+  } catch (err) {
+    console.error('[SUPABASE] Startup sync error:', err.message);
+  }
+}
+
+// Initial async sync
+syncFromSupabase();
+
 function getDatabase() {
+  if (cachedDB) return cachedDB;
+
   try {
     const raw = fs.readFileSync(DB_FILE, 'utf-8');
-    return JSON.parse(raw);
+    cachedDB = JSON.parse(raw);
+    return cachedDB;
   } catch (err) {
     console.error('Error reading database file:', err);
     return defaultDB;
@@ -66,8 +109,17 @@ function getDatabase() {
 }
 
 function saveDatabase(data) {
+  cachedDB = data;
   try {
     fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
+    
+    // Asynchronously sync to Supabase if configured
+    if (isSupabaseConfigured()) {
+      saveSupabaseDoc('database', data).catch(err => {
+        console.error('[SUPABASE] Background save error:', err.message);
+      });
+    }
+
     return true;
   } catch (err) {
     console.error('Error writing database file:', err);
@@ -76,9 +128,12 @@ function saveDatabase(data) {
 }
 
 function getConfig() {
+  if (cachedConfig) return cachedConfig;
+
   try {
     if (fs.existsSync(CONFIG_FILE)) {
-      return JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf-8'));
+      cachedConfig = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf-8'));
+      return cachedConfig;
     }
   } catch (e) {
     console.error('Error reading config:', e);
@@ -87,8 +142,16 @@ function getConfig() {
 }
 
 function saveConfig(config) {
+  cachedConfig = config;
   try {
     fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2), 'utf-8');
+    
+    if (isSupabaseConfigured()) {
+      saveSupabaseDoc('config', config).catch(err => {
+        console.error('[SUPABASE] Config save error:', err.message);
+      });
+    }
+
     return true;
   } catch (e) {
     console.error('Error saving config:', e);
@@ -97,9 +160,12 @@ function saveConfig(config) {
 }
 
 function getSessionState() {
+  if (cachedSession) return cachedSession;
+
   try {
     if (fs.existsSync(SESSION_FILE)) {
-      return JSON.parse(fs.readFileSync(SESSION_FILE, 'utf-8'));
+      cachedSession = JSON.parse(fs.readFileSync(SESSION_FILE, 'utf-8'));
+      return cachedSession;
     }
   } catch (e) {
     console.error('Error reading session file:', e);
@@ -108,8 +174,16 @@ function getSessionState() {
 }
 
 function saveSessionState(sessionData) {
+  cachedSession = sessionData;
   try {
     fs.writeFileSync(SESSION_FILE, JSON.stringify(sessionData, null, 2), 'utf-8');
+
+    if (isSupabaseConfigured()) {
+      saveSupabaseDoc('session', sessionData).catch(err => {
+        console.error('[SUPABASE] Session save error:', err.message);
+      });
+    }
+
     return true;
   } catch (e) {
     console.error('Error writing session file:', e);
@@ -118,9 +192,13 @@ function saveSessionState(sessionData) {
 }
 
 function deleteSessionState() {
+  cachedSession = null;
   try {
     if (fs.existsSync(SESSION_FILE)) {
       fs.unlinkSync(SESSION_FILE);
+    }
+    if (isSupabaseConfigured()) {
+      saveSupabaseDoc('session', null).catch(() => {});
     }
     return true;
   } catch (e) {
@@ -133,14 +211,13 @@ function logEvent(type, message, details = {}) {
   const logItem = {
     id: 'log-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
     timestamp: new Date().toISOString(),
-    type, // 'info' | 'success' | 'warn' | 'error' | 'post' | 'join'
+    type,
     message,
     details
   };
   
   if (!db.logs) db.logs = [];
   db.logs.unshift(logItem);
-  // Keep last 500 logs to prevent unbounded growth
   if (db.logs.length > 500) {
     db.logs = db.logs.slice(0, 500);
   }
@@ -158,6 +235,7 @@ module.exports = {
   saveSessionState,
   deleteSessionState,
   logEvent,
+  syncFromSupabase,
   DATA_DIR,
   SESSION_FILE
 };

@@ -45,7 +45,14 @@ async function getAuthenticatedContext(options = {}) {
 
     // If we have exported session cookies/state that aren't yet in persistent context, add them
     if (savedState && savedState.cookies && savedState.cookies.length > 0) {
-      await context.addCookies(savedState.cookies);
+      try {
+        const cleanCookies = sanitizeCookies(savedState.cookies);
+        if (cleanCookies.length > 0) {
+          await context.addCookies(cleanCookies);
+        }
+      } catch (cookieErr) {
+        logEvent('warn', `Warning adding cookies to context: ${cookieErr.message}`);
+      }
     }
 
     return context;
@@ -133,6 +140,48 @@ async function launchLoginAssistant() {
 }
 
 /**
+ * Normalizes cookies exported from various browser extensions to Playwright's strict schema
+ */
+function sanitizeCookies(cookiesList) {
+  if (!Array.isArray(cookiesList)) return [];
+
+  return cookiesList
+    .filter(c => c && typeof c.name === 'string' && typeof c.value === 'string')
+    .map(c => {
+      let sameSite = 'Lax';
+      const rawSameSite = String(c.sameSite || '').toLowerCase();
+      if (rawSameSite === 'strict') {
+        sameSite = 'Strict';
+      } else if (rawSameSite === 'none' || rawSameSite === 'no_restriction') {
+        sameSite = 'None';
+      } else {
+        sameSite = 'Lax';
+      }
+
+      // Playwright requires secure: true when sameSite is 'None'
+      const secure = sameSite === 'None' ? true : Boolean(c.secure);
+
+      const cookieObj = {
+        name: c.name,
+        value: c.value,
+        domain: c.domain ? (c.domain.startsWith('.') ? c.domain : `.${c.domain}`) : '.facebook.com',
+        path: c.path || '/',
+        httpOnly: Boolean(c.httpOnly),
+        secure: secure,
+        sameSite: sameSite
+      };
+
+      if (c.expirationDate && typeof c.expirationDate === 'number') {
+        cookieObj.expires = Math.round(c.expirationDate);
+      } else if (c.expires && typeof c.expires === 'number') {
+        cookieObj.expires = Math.round(c.expires);
+      }
+
+      return cookieObj;
+    });
+}
+
+/**
  * Import cookies from JSON format (Useful for Render/Cloud deployment)
  */
 function importSessionCookies(cookiesJsonOrString) {
@@ -144,16 +193,8 @@ function importSessionCookies(cookiesJsonOrString) {
       cookies = cookiesJsonOrString;
     }
 
-    // Format cookies if they are standard browser cookie export
-    const normalizedCookies = (Array.isArray(cookies) ? cookies : (cookies.cookies || [])).map(c => ({
-      name: c.name,
-      value: c.value,
-      domain: c.domain || '.facebook.com',
-      path: c.path || '/',
-      httpOnly: c.httpOnly ?? true,
-      secure: c.secure ?? true,
-      sameSite: c.sameSite || 'Lax'
-    }));
+    const rawList = Array.isArray(cookies) ? cookies : (cookies.cookies || []);
+    const normalizedCookies = sanitizeCookies(rawList);
 
     const sessionData = {
       cookies: normalizedCookies,

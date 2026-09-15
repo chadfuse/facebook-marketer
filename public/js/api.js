@@ -47,6 +47,11 @@ const API = {
 
   adminStatus: () => authFetch('/api/auth/admin-status'),
 
+  changePassword: (data) => authFetch('/api/auth/change-password', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  }),
+
   // Stats
   getStats: () => authFetch('/api/stats'),
 

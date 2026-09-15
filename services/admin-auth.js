@@ -1,8 +1,36 @@
 const crypto = require('crypto');
+const { getConfig, saveConfig } = require('./storage');
 
 const AUTH_SECRET = process.env.ADMIN_SECRET || process.env.SUPABASE_KEY || 'fb-marketer-secure-auth-secret-key';
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
+const DEFAULT_USERNAME = process.env.ADMIN_USERNAME || 'admin';
+const DEFAULT_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
+
+/**
+ * Returns current admin username and password from storage or environment fallback
+ */
+function getAdminCredentials() {
+  const config = getConfig();
+  const username = config.adminUsername || DEFAULT_USERNAME;
+  const password = config.adminPassword || DEFAULT_PASSWORD;
+  return { username, password };
+}
+
+/**
+ * Updates stored admin credentials
+ */
+function updateAdminCredentials(newUsername, newPassword) {
+  const config = getConfig();
+  if (newUsername) {
+    config.adminUsername = newUsername.trim();
+  }
+  if (newPassword) {
+    config.adminPassword = newPassword.trim();
+  }
+  saveConfig(config);
+  return {
+    username: config.adminUsername || DEFAULT_USERNAME
+  };
+}
 
 /**
  * Creates a signed session token
@@ -71,8 +99,8 @@ function requireAdminAuth(req, res, next) {
 }
 
 module.exports = {
-  ADMIN_USERNAME,
-  ADMIN_PASSWORD,
+  getAdminCredentials,
+  updateAdminCredentials,
   createAuthToken,
   verifyAuthToken,
   requireAdminAuth

@@ -37,8 +37,8 @@ const {
 } = require('./services/fb-poster');
 
 const {
-  ADMIN_USERNAME,
-  ADMIN_PASSWORD,
+  getAdminCredentials,
+  updateAdminCredentials,
   createAuthToken,
   verifyAuthToken,
   requireAdminAuth
@@ -57,10 +57,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 // ----------------------------------------------------
 app.post('/api/auth/admin-login', (req, res) => {
   const { username, password } = req.body;
-  const currentAdminUser = process.env.ADMIN_USERNAME || ADMIN_USERNAME;
-  const currentAdminPass = process.env.ADMIN_PASSWORD || ADMIN_PASSWORD;
+  const currentCreds = getAdminCredentials();
 
-  if (username === currentAdminUser && password === currentAdminPass) {
+  if (username === currentCreds.username && password === currentCreds.password) {
     const token = createAuthToken(username);
     logEvent('info', `Admin user "${username}" logged in successfully.`);
     return res.json({ success: true, token, username });
@@ -85,6 +84,24 @@ app.get('/api/auth/admin-status', (req, res) => {
 
 // Guard all other /api/* endpoints
 app.use(requireAdminAuth);
+
+app.post('/api/auth/change-password', (req, res) => {
+  const { currentPassword, newUsername, newPassword } = req.body;
+  const currentCreds = getAdminCredentials();
+
+  if (currentPassword !== currentCreds.password) {
+    return res.status(400).json({ success: false, error: 'Current password is incorrect' });
+  }
+
+  if (newPassword && newPassword.length < 6) {
+    return res.status(400).json({ success: false, error: 'New password must be at least 6 characters long' });
+  }
+
+  const updated = updateAdminCredentials(newUsername, newPassword);
+  const newToken = createAuthToken(updated.username);
+  logEvent('success', `Admin credentials updated successfully for user "${updated.username}".`);
+  res.json({ success: true, message: 'Account credentials updated successfully', token: newToken, username: updated.username });
+});
 
 // ----------------------------------------------------
 // 📊 STATS & OVERVIEW API

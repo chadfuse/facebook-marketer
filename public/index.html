@@ -432,6 +432,42 @@
             <button type="submit" class="btn btn-primary">💾 Save Configuration</button>
           </form>
         </div>
+
+        <!-- Account & Security Card -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">👤 Admin Account & Security</h3>
+          </div>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px;">
+            Update your admin login username and password. Changes persist across restarts via your database.
+          </p>
+
+          <form id="account-settings-form" style="max-width: 500px;">
+            <div class="form-group">
+              <label class="form-label">Current Password *</label>
+              <input type="password" class="form-input" id="acc-current-password" placeholder="••••••••" required autocomplete="current-password">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">New Username (Optional)</label>
+              <input type="text" class="form-input" id="acc-new-username" placeholder="Leave blank to keep current username" autocomplete="username">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">New Password *</label>
+              <input type="password" class="form-input" id="acc-new-password" placeholder="At least 6 characters" required autocomplete="new-password" minlength="6">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Confirm New Password *</label>
+              <input type="password" class="form-input" id="acc-confirm-password" placeholder="Confirm new password" required autocomplete="new-password" minlength="6">
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="btn-submit-change-password">
+              🔒 Update Admin Credentials
+            </button>
+          </form>
+        </div>
       </section>
 
       <!-- VIEW 7: LOGS -->

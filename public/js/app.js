@@ -973,6 +973,61 @@ function initForms() {
     settingsForm.addEventListener('submit', saveSettingsConfig);
   }
 
+  // Account Settings (Change Password) Form Submit
+  const accountForm = document.getElementById('account-settings-form');
+  if (accountForm) {
+    accountForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const currentPassword = document.getElementById('acc-current-password').value;
+      const newUsername = document.getElementById('acc-new-username').value.trim();
+      const newPassword = document.getElementById('acc-new-password').value;
+      const confirmPassword = document.getElementById('acc-confirm-password').value;
+      const submitBtn = document.getElementById('btn-submit-change-password');
+
+      if (newPassword !== confirmPassword) {
+        showToast('New passwords do not match!', 'error');
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        showToast('Password must be at least 6 characters long', 'error');
+        return;
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Updating...';
+      }
+
+      try {
+        const res = await API.changePassword({
+          currentPassword,
+          newUsername,
+          newPassword
+        });
+
+        if (res.success) {
+          setStoredToken(res.token);
+          updateAdminUserUI(res.username);
+          showToast('Account credentials updated successfully!', 'success');
+          document.getElementById('acc-current-password').value = '';
+          document.getElementById('acc-new-password').value = '';
+          document.getElementById('acc-confirm-password').value = '';
+          document.getElementById('acc-new-username').value = '';
+        } else {
+          showToast(res.error || 'Failed to update credentials', 'error');
+        }
+      } catch (err) {
+        showToast('Update error: ' + err.message, 'error');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerText = '🔒 Update Admin Credentials';
+        }
+      }
+    });
+  }
+
   // Filters
   document.getElementById('group-filter-niche')?.addEventListener('change', renderGroups);
   document.getElementById('group-filter-status')?.addEventListener('change', renderGroups);

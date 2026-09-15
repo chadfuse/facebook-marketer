@@ -1,20 +1,66 @@
-const API = {
-  // Stats
-  getStats: () => fetch('/api/stats').then(r => r.json()),
+function getStoredToken() {
+  return localStorage.getItem('fb_marketer_admin_token') || '';
+}
 
-  // Niches
-  getNiches: () => fetch('/api/niches').then(r => r.json()),
-  createNiche: (data) => fetch('/api/niches', {
+function setStoredToken(token) {
+  if (token) {
+    localStorage.setItem('fb_marketer_admin_token', token);
+  } else {
+    localStorage.removeItem('fb_marketer_admin_token');
+  }
+}
+
+async function authFetch(url, options = {}) {
+  const token = getStoredToken();
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(options.headers || {})
+  };
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url, {
+    ...options,
+    headers
+  });
+
+  if (response.status === 401 && !url.includes('/api/auth/admin-login') && !url.includes('/api/auth/admin-status')) {
+    setStoredToken('');
+    if (window.showAdminLoginModal) {
+      window.showAdminLoginModal();
+    }
+    throw new Error('Unauthorized');
+  }
+
+  return response.json();
+}
+
+const API = {
+  // Admin Auth
+  adminLogin: (username, password) => fetch('/api/auth/admin-login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
+    body: JSON.stringify({ username, password })
   }).then(r => r.json()),
-  updateNiche: (id, data) => fetch(`/api/niches/${id}`, {
+
+  adminStatus: () => authFetch('/api/auth/admin-status'),
+
+  // Stats
+  getStats: () => authFetch('/api/stats'),
+
+  // Niches
+  getNiches: () => authFetch('/api/niches'),
+  createNiche: (data) => authFetch('/api/niches', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  }),
+  updateNiche: (id, data) => authFetch(`/api/niches/${id}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
-  }).then(r => r.json()),
-  deleteNiche: (id) => fetch(`/api/niches/${id}`, { method: 'DELETE' }).then(r => r.json()),
+  }),
+  deleteNiche: (id) => authFetch(`/api/niches/${id}`, { method: 'DELETE' }),
 
   // Groups
   getGroups: (nicheId = '', status = '') => {
@@ -23,66 +69,58 @@ const API = {
     if (nicheId) params.push(`nicheId=${encodeURIComponent(nicheId)}`);
     if (status) params.push(`status=${encodeURIComponent(status)}`);
     if (params.length) query = '?' + params.join('&');
-    return fetch(`/api/groups${query}`).then(r => r.json());
+    return authFetch(`/api/groups${query}`);
   },
-  searchGroups: (nicheId) => fetch('/api/groups/search', {
+  searchGroups: (nicheId) => authFetch('/api/groups/search', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ nicheId })
-  }).then(r => r.json()),
-  joinGroup: (groupId) => fetch('/api/groups/join', {
+  }),
+  joinGroup: (groupId) => authFetch('/api/groups/join', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ groupId })
-  }).then(r => r.json()),
-  updateGroupStatus: (groupId, status, canPost) => fetch(`/api/groups/${groupId}/status`, {
+  }),
+  updateGroupStatus: (groupId, status, canPost) => authFetch(`/api/groups/${groupId}/status`, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ status, canPost })
-  }).then(r => r.json()),
-  deleteGroup: (groupId) => fetch(`/api/groups/${groupId}`, { method: 'DELETE' }).then(r => r.json()),
+  }),
+  deleteGroup: (groupId) => authFetch(`/api/groups/${groupId}`, { method: 'DELETE' }),
 
   // AI Generation
-  getFrameworks: () => fetch('/api/ai/frameworks').then(r => r.json()),
-  generatePosts: (payload) => fetch('/api/ai/generate', {
+  getFrameworks: () => authFetch('/api/ai/frameworks'),
+  generatePosts: (payload) => authFetch('/api/ai/generate', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
-  }).then(r => r.json()),
+  }),
 
   // Queue & Posting
-  getQueue: () => fetch('/api/queue').then(r => r.json()),
-  addToQueue: (payload) => fetch('/api/queue', {
+  getQueue: () => authFetch('/api/queue'),
+  addToQueue: (payload) => authFetch('/api/queue', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
-  }).then(r => r.json()),
-  deleteQueueItem: (id) => fetch(`/api/queue/${id}`, { method: 'DELETE' }).then(r => r.json()),
-  processQueueNow: () => fetch('/api/queue/process-now', { method: 'POST' }).then(r => r.json()),
-  postDirect: (groupId, content) => fetch('/api/posts/direct', {
+  }),
+  deleteQueueItem: (id) => authFetch(`/api/queue/${id}`, { method: 'DELETE' }),
+  processQueueNow: () => authFetch('/api/queue/process-now', { method: 'POST' }),
+  postDirect: (groupId, content) => authFetch('/api/posts/direct', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ groupId, content })
-  }).then(r => r.json()),
-  getHistory: () => fetch('/api/history').then(r => r.json()),
+  }),
+  getHistory: () => authFetch('/api/history'),
 
   // Auth & Session
-  getAuthStatus: () => fetch('/api/auth/status').then(r => r.json()),
-  launchLoginAssistant: () => fetch('/api/auth/login-assistant', { method: 'POST' }).then(r => r.json()),
-  importCookies: (cookies) => fetch('/api/auth/import-cookies', {
+  getAuthStatus: () => authFetch('/api/auth/status'),
+  launchLoginAssistant: () => authFetch('/api/auth/login-assistant', { method: 'POST' }),
+  importCookies: (cookies) => authFetch('/api/auth/import-cookies', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ cookies })
-  }).then(r => r.json()),
-  logout: () => fetch('/api/auth/logout', { method: 'POST' }).then(r => r.json()),
+  }),
+  logout: () => authFetch('/api/auth/logout', { method: 'POST' }),
 
   // Config & Logs
-  getConfig: () => fetch('/api/config').then(r => r.json()),
-  saveConfig: (config) => fetch('/api/config', {
+  getConfig: () => authFetch('/api/config'),
+  saveConfig: (config) => authFetch('/api/config', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(config)
-  }).then(r => r.json()),
-  getLogs: () => fetch('/api/logs').then(r => r.json()),
-  clearLogs: () => fetch('/api/logs/clear', { method: 'POST' }).then(r => r.json())
+  }),
+  getLogs: () => authFetch('/api/logs'),
+  clearLogs: () => authFetch('/api/logs/clear', { method: 'POST' })
 };

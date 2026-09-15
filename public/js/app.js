@@ -16,16 +16,66 @@ const state = {
   isGeneratingAi: false
 };
 
+// Admin Auth Handlers
+window.showAdminLoginModal = function() {
+  const modal = document.getElementById('admin-login-modal');
+  if (modal) modal.classList.add('active');
+  document.getElementById('admin-user-display').style.display = 'none';
+  document.getElementById('btn-admin-logout').style.display = 'none';
+};
+
+window.hideAdminLoginModal = function() {
+  const modal = document.getElementById('admin-login-modal');
+  if (modal) modal.classList.remove('active');
+};
+
+function updateAdminUserUI(username) {
+  const display = document.getElementById('admin-user-display');
+  const label = document.getElementById('admin-username-label');
+  const logoutBtn = document.getElementById('btn-admin-logout');
+
+  if (username) {
+    if (display) display.style.display = 'inline-block';
+    if (label) label.innerText = username;
+    if (logoutBtn) logoutBtn.style.display = 'inline-block';
+  } else {
+    if (display) display.style.display = 'none';
+    if (logoutBtn) logoutBtn.style.display = 'none';
+  }
+}
+
+function logoutAdmin() {
+  setStoredToken('');
+  updateAdminUserUI(null);
+  window.showAdminLoginModal();
+  showToast('Signed out of admin dashboard', 'info');
+}
+
 // DOM Initializer
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   initNavigation();
   initModals();
   initFrameworkSelector();
   initForms();
-  fetchAllData();
   
-  // Refresh stats & logs periodically
-  setInterval(refreshLogs, 10000);
+  // Check Admin Login status first
+  try {
+    const status = await API.adminStatus();
+    if (status && status.isAuthenticated) {
+      updateAdminUserUI(status.user || 'admin');
+      window.hideAdminLoginModal();
+      fetchAllData();
+    } else {
+      window.showAdminLoginModal();
+    }
+  } catch (e) {
+    window.showAdminLoginModal();
+  }
+  
+  // Refresh stats & logs periodically if logged in
+  setInterval(() => {
+    if (getStoredToken()) refreshLogs();
+  }, 10000);
 });
 
 // Toast System
@@ -868,6 +918,51 @@ function initForms() {
       } finally {
         btn.disabled = false;
         btn.innerHTML = `🚀 Publish Now`;
+      }
+    });
+  }
+
+  // Admin Login Form Submit
+  const adminLoginForm = document.getElementById('admin-login-form');
+  if (adminLoginForm) {
+    adminLoginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const username = document.getElementById('admin-login-username').value.trim();
+      const password = document.getElementById('admin-login-password').value;
+      const errorDiv = document.getElementById('admin-login-error');
+      const submitBtn = document.getElementById('btn-submit-admin-login');
+
+      if (errorDiv) errorDiv.style.display = 'none';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Verifying...';
+      }
+
+      try {
+        const res = await API.adminLogin(username, password);
+        if (res.success && res.token) {
+          setStoredToken(res.token);
+          updateAdminUserUI(res.username || username);
+          window.hideAdminLoginModal();
+          showToast('Welcome back, Admin!', 'success');
+          document.getElementById('admin-login-password').value = '';
+          fetchAllData();
+        } else {
+          if (errorDiv) {
+            errorDiv.innerText = res.error || 'Invalid username or password';
+            errorDiv.style.display = 'block';
+          }
+        }
+      } catch (err) {
+        if (errorDiv) {
+          errorDiv.innerText = 'Login error: ' + err.message;
+          errorDiv.style.display = 'block';
+        }
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerText = '🔐 Sign In to Dashboard';
+        }
       }
     });
   }

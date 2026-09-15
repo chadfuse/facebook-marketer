@@ -36,6 +36,14 @@ const {
   processNextQueueItem
 } = require('./services/fb-poster');
 
+const {
+  ADMIN_USERNAME,
+  ADMIN_PASSWORD,
+  createAuthToken,
+  verifyAuthToken,
+  requireAdminAuth
+} = require('./services/admin-auth');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -43,6 +51,40 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+// ----------------------------------------------------
+// 🔐 ADMIN DASHBOARD AUTHENTICATION
+// ----------------------------------------------------
+app.post('/api/auth/admin-login', (req, res) => {
+  const { username, password } = req.body;
+  const currentAdminUser = process.env.ADMIN_USERNAME || ADMIN_USERNAME;
+  const currentAdminPass = process.env.ADMIN_PASSWORD || ADMIN_PASSWORD;
+
+  if (username === currentAdminUser && password === currentAdminPass) {
+    const token = createAuthToken(username);
+    logEvent('info', `Admin user "${username}" logged in successfully.`);
+    return res.json({ success: true, token, username });
+  }
+
+  logEvent('warn', `Failed admin login attempt for username "${username}".`);
+  res.status(401).json({ success: false, error: 'Invalid username or password' });
+});
+
+app.get('/api/auth/admin-status', (req, res) => {
+  const authHeader = req.headers.authorization;
+  let token = null;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.substring(7);
+  } else if (req.headers['x-admin-token']) {
+    token = req.headers['x-admin-token'];
+  }
+
+  const session = verifyAuthToken(token);
+  res.json({ isAuthenticated: Boolean(session), user: session ? session.username : null });
+});
+
+// Guard all other /api/* endpoints
+app.use(requireAdminAuth);
 
 // ----------------------------------------------------
 // 📊 STATS & OVERVIEW API

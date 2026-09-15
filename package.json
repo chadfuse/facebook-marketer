@@ -4,8 +4,8 @@
   "description": "AI-Powered Facebook Group Niche Marketer & Auto-Poster for Web Development Services",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js",
+    "start": "node --max-old-space-size=256 --expose-gc server.js",
+    "dev": "node --max-old-space-size=256 --expose-gc --watch server.js",
     "postinstall": "npx playwright install chromium"
   },
   "keywords": [

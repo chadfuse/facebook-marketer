@@ -156,14 +156,15 @@ function switchView(viewName) {
 // Data Fetching
 async function fetchAllData() {
   try {
-    const [niches, groups, frameworks, config, auth, queue, history] = await Promise.all([
+    const [niches, groups, frameworks, config, auth, queue, history, autopilot] = await Promise.all([
       API.getNiches(),
       API.getGroups(),
       API.getFrameworks(),
       API.getConfig(),
       API.getAuthStatus().catch(() => ({ isLoggedIn: false })),
       API.getQueue(),
-      API.getHistory()
+      API.getHistory(),
+      API.getAutopilotStatus().catch(() => ({ enabled: false }))
     ]);
 
     state.niches = niches || [];
@@ -173,14 +174,78 @@ async function fetchAllData() {
     state.auth = auth || { isLoggedIn: false };
     state.queue = queue || [];
     state.history = history || [];
+    state.autopilot = autopilot || { enabled: false };
 
     updateAuthBadge();
+    updateAutopilotUI(state.autopilot);
     populateNicheSelectDropdowns();
     renderFrameworkCards();
     loadOverviewStats();
     populateSettingsForm();
   } catch (err) {
     console.error('Error fetching initial data:', err);
+  }
+}
+
+// Autopilot UI Update & Handlers
+function updateAutopilotUI(autopilot) {
+  const toggle = document.getElementById('autopilot-toggle-switch');
+  const badge = document.getElementById('autopilot-status-badge');
+  if (toggle) {
+    toggle.checked = Boolean(autopilot.enabled);
+  }
+  if (badge) {
+    if (autopilot.enabled) {
+      badge.className = 'badge badge-joined';
+      badge.innerText = 'Active 🟢';
+    } else {
+      badge.className = 'badge badge-discovered';
+      badge.innerText = 'Standby ⏸️';
+    }
+  }
+}
+
+async function toggleAutopilotMode(enabled) {
+  try {
+    const res = await API.toggleAutopilot({ enabled });
+    if (res.success) {
+      state.autopilot.enabled = res.enabled;
+      updateAutopilotUI(state.autopilot);
+      showToast(res.enabled ? 'Autopilot Outreach Engine Activated! 🚀' : 'Autopilot set to Standby ⏸️', 'success');
+      refreshLogs();
+    }
+  } catch (err) {
+    showToast('Failed to toggle autopilot: ' + err.message, 'error');
+    updateAutopilotUI(state.autopilot);
+  }
+}
+
+async function triggerRunAutopilotNow() {
+  const btn = document.getElementById('btn-run-autopilot-now');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerText = '⏳ Running Cycle...';
+  }
+  showToast('Executing Autopilot cycle (Discovery, Join & Queue)...', 'info');
+
+  try {
+    const res = await API.runAutopilotNow();
+    if (res.status === 'success') {
+      showToast(`Autopilot finished! Discovered: ${res.results.discoveredCount}, Joined: ${res.results.joinedCount}, Queued: ${res.results.generatedPostsCount}`, 'success');
+      fetchAllData();
+    } else if (res.status === 'disabled') {
+      showToast('Turn ON the Autopilot switch first', 'warn');
+    } else {
+      showToast('Autopilot result: ' + (res.message || res.status), 'info');
+    }
+    refreshLogs();
+  } catch (err) {
+    showToast('Autopilot error: ' + err.message, 'error');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerText = '⚡ Run Cycle Now';
+    }
   }
 }
 

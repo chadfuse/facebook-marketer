@@ -443,15 +443,63 @@ app.post('/api/logs/clear', (req, res) => {
 });
 
 // ----------------------------------------------------
-// ⏰ BACKGROUND QUEUE AUTOMATION CRON
+// 🤖 AUTOPILOT ENGINE API
 // ----------------------------------------------------
-// Checks queue every 15 minutes to respect anti-spam pacing
+const { runAutopilotCycle } = require('./services/autopilot');
+
+app.get('/api/autopilot/status', (req, res) => {
+  const config = getConfig();
+  res.json({
+    enabled: Boolean(config.autopilotEnabled),
+    dailyJoinLimit: config.autopilotDailyJoinLimit || 3,
+    autoSearch: config.autopilotAutoSearch !== false,
+    autoGeneratePosts: config.autopilotAutoGeneratePosts !== false
+  });
+});
+
+app.post('/api/autopilot/toggle', (req, res) => {
+  const { enabled, dailyJoinLimit } = req.body;
+  const config = getConfig();
+  if (enabled !== undefined) config.autopilotEnabled = Boolean(enabled);
+  if (dailyJoinLimit !== undefined) config.autopilotDailyJoinLimit = parseInt(dailyJoinLimit) || 3;
+  
+  saveConfig(config);
+  logEvent('info', `Autopilot ${config.autopilotEnabled ? 'ENABLED 🟢' : 'DISABLED 🔴'}`);
+  res.json({ success: true, enabled: config.autopilotEnabled, config });
+});
+
+app.post('/api/autopilot/run-now', async (req, res) => {
+  try {
+    const result = await runAutopilotCycle();
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ----------------------------------------------------
+// ⏰ BACKGROUND AUTOMATION CRONS
+// ----------------------------------------------------
+// 1. Checks and processes posting queue every 15 minutes
 cron.schedule('*/15 * * * *', async () => {
   console.log('[CRON] Running scheduled post queue check...');
   try {
     await processNextQueueItem();
   } catch (err) {
     console.error('[CRON] Error processing queue:', err.message);
+  }
+});
+
+// 2. Runs Autopilot Discovery & Auto-Joiner cycle every 30 minutes
+cron.schedule('*/30 * * * *', async () => {
+  const config = getConfig();
+  if (config.autopilotEnabled) {
+    console.log('[CRON] Running scheduled Autopilot cycle...');
+    try {
+      await runAutopilotCycle();
+    } catch (err) {
+      console.error('[CRON] Error running autopilot:', err.message);
+    }
   }
 });
 

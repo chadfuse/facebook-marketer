@@ -52,6 +52,16 @@ const API = {
     body: JSON.stringify(data)
   }),
 
+  // Autopilot Engine
+  getAutopilotStatus: () => authFetch('/api/autopilot/status'),
+  toggleAutopilot: (data) => authFetch('/api/autopilot/toggle', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  }),
+  runAutopilotNow: () => authFetch('/api/autopilot/run-now', {
+    method: 'POST'
+  }),
+
   // Stats
   getStats: () => authFetch('/api/stats'),
 

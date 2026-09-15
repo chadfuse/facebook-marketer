@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,641 +11,674 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
+  <!-- DaisyUI 4 + Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+<body class="bg-base-300 text-base-content min-h-screen flex flex-col md:flex-row">
 
-<div class="app-container">
-  
-  <!-- Sidebar Navigation -->
-  <aside class="sidebar">
-    <div class="brand-section">
-      <div class="brand-icon">⚡</div>
-      <div class="brand-text">
-        <h1>FB Marketer AI</h1>
-        <p>Client Acquisition Suite</p>
+  <!-- Sidebar Navigation (DaisyUI Menu) -->
+  <aside class="w-full md:w-64 bg-base-200 border-r border-base-100/50 flex flex-col flex-shrink-0 md:h-screen md:sticky md:top-0 z-40">
+    <div class="p-5 flex items-center gap-3 border-b border-base-100/50">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-xl shadow-lg shadow-primary/20 text-white font-bold">
+        ⚡
+      </div>
+      <div>
+        <h1 class="font-bold text-base leading-tight bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">FB Marketer AI</h1>
+        <p class="text-xs text-primary font-medium tracking-wide">Client Acquisition Suite</p>
       </div>
     </div>
 
-    <nav class="nav-menu">
-      <a class="nav-item active" data-view="overview">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-        Overview
-      </a>
-      <a class="nav-item" data-view="niches">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
-        Target Niches
-      </a>
-      <a class="nav-item" data-view="groups">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-        Group Discovery
-      </a>
-      <a class="nav-item" data-view="studio">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-        Gemini AI Studio
-      </a>
-      <a class="nav-item" data-view="queue">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-        Queue & Poster
-      </a>
-      <a class="nav-item" data-view="settings">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-        Settings & Auth
-      </a>
-      <a class="nav-item" data-view="logs">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
-        Activity Logs
-      </a>
-    </nav>
+    <ul class="menu p-3 gap-1 flex-1 overflow-y-auto">
+      <li>
+        <a class="nav-item active font-medium py-3 rounded-lg" data-view="overview">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Overview
+        </a>
+      </li>
+      <li>
+        <a class="nav-item font-medium py-3 rounded-lg" data-view="niches">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+          Target Niches
+        </a>
+      </li>
+      <li>
+        <a class="nav-item font-medium py-3 rounded-lg" data-view="groups">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          Group Discovery
+        </a>
+      </li>
+      <li>
+        <a class="nav-item font-medium py-3 rounded-lg" data-view="studio">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          Gemini AI Studio
+        </a>
+      </li>
+      <li>
+        <a class="nav-item font-medium py-3 rounded-lg" data-view="queue">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          Queue & Poster
+        </a>
+      </li>
+      <li>
+        <a class="nav-item font-medium py-3 rounded-lg" data-view="settings">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+          Settings & Auth
+        </a>
+      </li>
+      <li>
+        <a class="nav-item font-medium py-3 rounded-lg" data-view="logs">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg>
+          Activity Logs
+        </a>
+      </li>
+    </ul>
 
-    <div class="sidebar-footer">
-      <div class="auth-badge">
-        <div class="status-dot" id="auth-status-dot"></div>
+    <!-- Auth status footer -->
+    <div class="p-4 border-t border-base-100/50 flex items-center justify-between bg-base-300/30">
+      <div class="flex items-center gap-2 text-xs text-base-content/70">
+        <span class="w-2.5 h-2.5 rounded-full bg-error" id="auth-status-dot"></span>
         <span id="auth-status-text">Checking FB Auth...</span>
       </div>
     </div>
   </aside>
 
-  <!-- Main Wrapper -->
-  <div class="main-wrapper">
-    <!-- Header -->
-    <header class="top-bar">
-      <div class="page-title">
-        <h2 id="view-title">Marketing Command Center</h2>
-        <p id="view-desc">Real-time overview of Facebook groups, outreach queue, and performance.</p>
+  <!-- Main Content Wrapper -->
+  <div class="flex-1 flex flex-col min-w-0">
+    
+    <!-- Top Navbar -->
+    <header class="navbar bg-base-200/80 backdrop-blur-md border-b border-base-100/50 px-6 sticky top-0 z-30 justify-between">
+      <div class="flex flex-col items-start">
+        <h2 class="font-bold text-lg leading-tight" id="view-title">Marketing Command Center</h2>
+        <p class="text-xs text-base-content/60" id="view-desc">Real-time overview of Facebook groups, outreach queue, and performance.</p>
       </div>
-      <div class="top-actions">
-        <span id="admin-user-display" style="font-size:0.85rem; color:var(--text-secondary); display:none;">Logged in as: <strong style="color:#fff;" id="admin-username-label">admin</strong></span>
-        <button class="btn btn-secondary btn-sm" onclick="switchView('settings')">⚙️ Settings</button>
+
+      <div class="flex items-center gap-2">
+        <span id="admin-user-display" class="text-xs text-base-content/70 hidden">
+          Logged in as: <strong class="text-primary" id="admin-username-label">admin</strong>
+        </span>
+        <button class="btn btn-ghost btn-sm" onclick="switchView('settings')">⚙️ Settings</button>
         <button class="btn btn-primary btn-sm" onclick="openNicheModal()">+ Add Niche</button>
-        <button class="btn btn-danger btn-sm" id="btn-admin-logout" onclick="logoutAdmin()" style="display:none;">Sign Out</button>
+        <button class="btn btn-outline btn-error btn-sm hidden" id="btn-admin-logout" onclick="logoutAdmin()">Sign Out</button>
       </div>
     </header>
 
-    <!-- Main Content Body -->
-    <main class="content-body">
+    <!-- Main Views Container -->
+    <main class="p-6 md:p-8 max-w-7xl w-full mx-auto flex-1">
 
+      <!-- ======================================================= -->
       <!-- VIEW 1: OVERVIEW -->
-      <section class="view-panel active" id="view-overview">
-        <!-- Stats Grid -->
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-header">
-              <span>Target Niches</span>
-              <span>🎯</span>
-            </div>
-            <div class="stat-value" id="stat-niches">0</div>
+      <!-- ======================================================= -->
+      <section class="view-panel active space-y-6" id="view-overview">
+        
+        <!-- Stats Grid (DaisyUI Stats) -->
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div class="stat bg-base-200 border border-base-100/50 rounded-box p-4 shadow-sm">
+            <div class="stat-title text-xs">Target Niches</div>
+            <div class="stat-value text-2xl font-black text-primary" id="stat-niches">0</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-header">
-              <span>Total Groups</span>
-              <span>👥</span>
-            </div>
-            <div class="stat-value" id="stat-groups">0</div>
+          <div class="stat bg-base-200 border border-base-100/50 rounded-box p-4 shadow-sm">
+            <div class="stat-title text-xs">Total Groups</div>
+            <div class="stat-value text-2xl font-black" id="stat-groups">0</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-header">
-              <span>Joined Groups</span>
-              <span class="stat-badge badge-joined">Ready</span>
-            </div>
-            <div class="stat-value" id="stat-joined" style="color:var(--accent-emerald);">0</div>
+          <div class="stat bg-base-200 border border-base-100/50 rounded-box p-4 shadow-sm">
+            <div class="stat-title text-xs">Joined Groups</div>
+            <div class="stat-value text-2xl font-black text-success" id="stat-joined">0</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-header">
-              <span>Pending Joins</span>
-              <span class="stat-badge badge-pending">Waiting</span>
-            </div>
-            <div class="stat-value" id="stat-pending" style="color:var(--accent-amber);">0</div>
+          <div class="stat bg-base-200 border border-base-100/50 rounded-box p-4 shadow-sm">
+            <div class="stat-title text-xs">Pending Joins</div>
+            <div class="stat-value text-2xl font-black text-warning" id="stat-pending">0</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-header">
-              <span>Posts in Queue</span>
-              <span>⏰</span>
-            </div>
-            <div class="stat-value" id="stat-queued">0</div>
+          <div class="stat bg-base-200 border border-base-100/50 rounded-box p-4 shadow-sm">
+            <div class="stat-title text-xs">Posts in Queue</div>
+            <div class="stat-value text-2xl font-black text-info" id="stat-queued">0</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-header">
-              <span>Posts Today</span>
-              <span class="stat-badge badge-discovered">Safety Limit</span>
-            </div>
-            <div class="stat-value" id="stat-today">0 / 5</div>
+          <div class="stat bg-base-200 border border-base-100/50 rounded-box p-4 shadow-sm">
+            <div class="stat-title text-xs">Posts Today</div>
+            <div class="stat-value text-2xl font-black" id="stat-today">0 / 5</div>
           </div>
         </div>
 
-        <!-- Autopilot Master Switch Card -->
-        <div class="card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(99, 102, 241, 0.06)); border: 1px solid rgba(16, 185, 129, 0.3);">
-          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
-            <div style="display: flex; align-items: center; gap: 14px;">
-              <div style="width: 44px; height: 44px; background: rgba(16, 185, 129, 0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; color: var(--accent-emerald);">🤖</div>
+        <!-- Autopilot Master Switch Card (DaisyUI Card) -->
+        <div class="card bg-base-200 border border-success/30 shadow-lg">
+          <div class="card-body p-5 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-success/15 text-success flex items-center justify-center text-2xl font-bold">
+                🤖
+              </div>
               <div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <h3 style="font-size: 1.15rem; font-weight: 700; color: #fff;">Full Autopilot Outreach Engine</h3>
-                  <span class="badge badge-discovered" id="autopilot-status-badge">Standby</span>
+                <div class="flex items-center gap-2">
+                  <h3 class="font-bold text-base text-base-content">Full Autopilot Outreach Engine</h3>
+                  <span class="badge badge-sm badge-outline badge-info" id="autopilot-status-badge">Standby ⏸️</span>
                 </div>
-                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 2px;">
+                <p class="text-xs text-base-content/70 mt-0.5">
                   Automatically searches niche groups, submits daily join requests, and queues fresh AI-crafted posts.
                 </p>
               </div>
             </div>
 
-            <div style="display: flex; align-items: center; gap: 14px;">
-              <button class="btn btn-secondary btn-sm" id="btn-run-autopilot-now" onclick="triggerRunAutopilotNow()" title="Run a single test cycle right now">
+            <div class="flex items-center gap-3">
+              <button class="btn btn-outline btn-sm" id="btn-run-autopilot-now" onclick="triggerRunAutopilotNow()" title="Run a test cycle right now">
                 ⚡ Run Cycle Now
               </button>
-              <label class="switch" title="Toggle Autopilot On/Off">
-                <input type="checkbox" id="autopilot-toggle-switch" onchange="toggleAutopilotMode(this.checked)">
-                <span class="slider"></span>
-              </label>
+              <input type="checkbox" class="toggle toggle-success toggle-lg" id="autopilot-toggle-switch" onchange="toggleAutopilotMode(this.checked)" />
             </div>
           </div>
         </div>
 
-        <!-- Strategy Box -->
-        <div class="card" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(6, 182, 212, 0.05)); border-color: rgba(99, 102, 241, 0.3);">
-          <div class="card-title" style="color: #fff;">
-            <span>💡 4-Step Client Acquisition Engine</span>
-          </div>
-          <p style="color: var(--text-secondary); margin-top: 8px; font-size: 0.92rem; line-height: 1.6;">
-            1. <strong>Add Niches</strong> (e.g. <em>"HVAC Company New York"</em>, <em>"Dentists Florida"</em>).<br>
-            2. <strong>Auto-Discover & Join</strong> relevant active Facebook groups.<br>
-            3. <strong>Generate High-Converting Pitches</strong> via Gemini using the <em>Free Website Audit</em> or <em>Case Study</em> frameworks.<br>
-            4. <strong>Queue or Post</strong> with human typing delays to safeguard your Facebook account.
-          </p>
-          <div style="margin-top: 16px; display: flex; gap: 10px;">
-            <button class="btn btn-primary btn-sm" onclick="switchView('studio')">✨ Open Gemini AI Studio</button>
-            <button class="btn btn-secondary btn-sm" onclick="switchView('groups')">🔍 Find FB Groups</button>
+        <!-- 4-Step Strategy Card -->
+        <div class="card bg-gradient-to-r from-primary/10 via-base-200 to-accent/10 border border-primary/20 shadow-md">
+          <div class="card-body p-6">
+            <h3 class="card-title text-base font-bold text-white flex items-center gap-2">
+              <span>💡 4-Step Client Acquisition Engine</span>
+            </h3>
+            <p class="text-xs text-base-content/80 leading-relaxed mt-2">
+              1. <strong>Add Niches</strong> (e.g. <em>"HVAC Company New York"</em>, <em>"Dentists Florida"</em>).<br>
+              2. <strong>Auto-Discover & Join</strong> relevant active Facebook groups.<br>
+              3. <strong>Generate High-Converting Pitches</strong> via Gemini using the <em>Free Website Audit</em> or <em>Case Study</em> frameworks.<br>
+              4. <strong>Queue or Post</strong> with human typing delays to safeguard your Facebook account.
+            </p>
+            <div class="card-actions justify-start mt-4">
+              <button class="btn btn-primary btn-sm" onclick="switchView('studio')">✨ Open Gemini AI Studio</button>
+              <button class="btn btn-ghost btn-sm" onclick="switchView('groups')">🔍 Find FB Groups</button>
+            </div>
           </div>
         </div>
 
-        <!-- Recent Posts Table -->
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">Recent Published Posts</h3>
-            <button class="btn btn-secondary btn-sm" onclick="switchView('queue')">View Full Queue & History &rarr;</button>
+        <!-- Recent Published Posts Table -->
+        <div class="card bg-base-200 border border-base-100/50 shadow-md">
+          <div class="card-body p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-bold text-base">Recent Published Posts</h3>
+              <button class="btn btn-ghost btn-xs text-primary" onclick="switchView('queue')">View Full Queue & History &rarr;</button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="table table-zebra w-full">
+                <thead>
+                  <tr class="text-xs text-base-content/60 border-b border-base-300">
+                    <th>Target Group</th>
+                    <th>Niche</th>
+                    <th>Date / Time</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="recent-posts-list">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
           </div>
-          <table class="custom-table">
-            <thead>
-              <tr>
-                <th>Target Group</th>
-                <th>Niche</th>
-                <th>Date / Time</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody id="recent-posts-list">
-              <!-- Rendered dynamically -->
-            </tbody>
-          </table>
         </div>
+
       </section>
 
+      <!-- ======================================================= -->
       <!-- VIEW 2: NICHES -->
-      <section class="view-panel" id="view-niches">
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">Configured Niches & Search Angles</h3>
-            <button class="btn btn-primary" onclick="openNicheModal()">+ Add New Niche</button>
+      <!-- ======================================================= -->
+      <section class="view-panel space-y-6" id="view-niches">
+        <div class="card bg-base-200 border border-base-100/50 shadow-md">
+          <div class="card-body p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="font-bold text-lg">Configured Niches & Search Angles</h3>
+                <p class="text-xs text-base-content/60 mt-1">Define the exact industries and regional markets you want to acquire web development clients in.</p>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="openNicheModal()">+ Add New Niche</button>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="table table-zebra w-full">
+                <thead>
+                  <tr class="text-xs text-base-content/60 border-b border-base-300">
+                    <th>Niche / Industry</th>
+                    <th>FB Search Keyword</th>
+                    <th>Custom Offer Angle</th>
+                    <th>Group Stats</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="niches-table-body">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
           </div>
-          <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:20px;">
-            Define the exact industries and regional markets you want to acquire web development clients in.
-          </p>
-          <table class="custom-table">
-            <thead>
-              <tr>
-                <th>Niche / Industry</th>
-                <th>FB Search Keyword</th>
-                <th>Custom Offer Angle</th>
-                <th>Group Stats</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="niches-table-body">
-              <!-- Rendered dynamically -->
-            </tbody>
-          </table>
         </div>
       </section>
 
+      <!-- ======================================================= -->
       <!-- VIEW 3: GROUPS DISCOVERY -->
-      <section class="view-panel" id="view-groups">
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">Facebook Group Discovery & Auto-Joiner</h3>
-          </div>
-          
-          <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; align-items: flex-end;">
-            <div style="flex: 1; min-width: 240px;">
-              <label class="form-label">Search for Niche Groups:</label>
-              <select class="form-select" id="search-niche-select">
-                <!-- Dynamic options -->
-              </select>
+      <!-- ======================================================= -->
+      <section class="view-panel space-y-6" id="view-groups">
+        <div class="card bg-base-200 border border-base-100/50 shadow-md">
+          <div class="card-body p-6">
+            <h3 class="font-bold text-lg mb-2">Facebook Group Discovery & Auto-Joiner</h3>
+
+            <div class="flex flex-col md:flex-row gap-3 items-end mb-6">
+              <div class="flex-1 w-full">
+                <label class="label text-xs font-semibold py-1">Select Niche to Search:</label>
+                <select class="select select-bordered select-sm w-full" id="search-niche-select">
+                  <!-- Dynamic options -->
+                </select>
+              </div>
+              <button class="btn btn-primary btn-sm w-full md:w-auto" id="btn-run-group-search" onclick="executeGroupSearch(document.getElementById('search-niche-select').value)">
+                🔍 Search FB Groups
+              </button>
             </div>
-            <button class="btn btn-primary" id="btn-run-group-search" onclick="executeGroupSearch(document.getElementById('search-niche-select').value)">
-              🔍 Search FB Groups
+
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <div class="flex gap-2">
+                <select class="select select-bordered select-xs" id="group-filter-niche">
+                  <option value="">All Niches</option>
+                </select>
+                <select class="select select-bordered select-xs" id="group-filter-status">
+                  <option value="">All Statuses</option>
+                  <option value="joined">Joined</option>
+                  <option value="join_requested">Pending Approval</option>
+                  <option value="discovered">Discovered</option>
+                </select>
+              </div>
+              <span class="text-xs text-base-content/60">
+                🛡️ Tip: Max 5-10 group joins per day to prevent verification challenges.
+              </span>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="table table-zebra w-full">
+                <thead>
+                  <tr class="text-xs text-base-content/60 border-b border-base-300">
+                    <th>Group Name</th>
+                    <th>Niche</th>
+                    <th>Members</th>
+                    <th>Privacy</th>
+                    <th>Join Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="groups-table-body">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================= -->
+      <!-- VIEW 4: GEMINI AI STUDIO -->
+      <!-- ======================================================= -->
+      <section class="view-panel space-y-6" id="view-studio">
+        <div class="card bg-base-200 border border-base-100/50 shadow-md">
+          <div class="card-body p-6">
+            <h3 class="font-bold text-lg mb-1">✨ Gemini AI Outreach Copy Generator</h3>
+            <p class="text-xs text-base-content/60 mb-5">Select a proven marketing framework to generate high-converting, non-spammy messages that attract local business owners.</p>
+
+            <label class="label text-xs font-semibold py-1">Select Proven Marketing Framework:</label>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 mb-5" id="frameworks-container">
+              <!-- Framework cards rendered dynamically -->
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div>
+                <label class="label text-xs font-semibold py-1">Target Niche Context:</label>
+                <select class="select select-bordered select-sm w-full" id="studio-niche-select">
+                  <!-- Options -->
+                </select>
+              </div>
+              <div>
+                <label class="label text-xs font-semibold py-1">Portfolio / Case Study URL:</label>
+                <input type="text" class="input input-bordered input-sm w-full" id="studio-portfolio-input" placeholder="https://myportfolio.dev">
+              </div>
+              <div>
+                <label class="label text-xs font-semibold py-1">Number of Variations:</label>
+                <select class="select select-bordered select-sm w-full" id="studio-count-select">
+                  <option value="1">1 Unique Post</option>
+                  <option value="2">2 Variations</option>
+                  <option value="3" selected>3 Variations (Recommended)</option>
+                  <option value="5">5 Variations</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-5">
+              <label class="label text-xs font-semibold py-1">Custom Angles or Specific Offer Instructions (Optional):</label>
+              <textarea class="textarea textarea-bordered w-full h-20 text-sm" id="studio-custom-prompt" placeholder="e.g. Mention that we build with Next.js for sub-second speeds and include a 14-day delivery guarantee."></textarea>
+            </div>
+
+            <button class="btn btn-primary w-full shadow-lg shadow-primary/20" id="btn-generate-ai" onclick="generateAiPosts()">
+              ✨ Generate Tailored Posts with Gemini
             </button>
           </div>
-
-          <div style="display: flex; gap: 12px; margin-bottom: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
-            <div style="display: flex; gap: 12px;">
-              <select class="form-select" id="group-filter-niche" style="width: auto;">
-                <option value="">All Niches</option>
-              </select>
-              <select class="form-select" id="group-filter-status" style="width: auto;">
-                <option value="">All Statuses</option>
-                <option value="joined">Joined</option>
-                <option value="join_requested">Pending Approval</option>
-                <option value="discovered">Discovered</option>
-              </select>
-            </div>
-            <span style="font-size: 0.85rem; color: var(--text-muted);">
-              Tip: Facebook recommends max 5-10 group joins per day to prevent verification challenges.
-            </span>
-          </div>
-
-          <table class="custom-table">
-            <thead>
-              <tr>
-                <th>Group Name</th>
-                <th>Niche</th>
-                <th>Members</th>
-                <th>Privacy</th>
-                <th>Join Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="groups-table-body">
-              <!-- Rendered dynamically -->
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- VIEW 4: GEMINI AI STUDIO -->
-      <section class="view-panel" id="view-studio">
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">✨ Gemini AI Outreach Copy Generator</h3>
-          </div>
-
-          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px;">
-            Select a proven marketing framework to generate high-converting, non-spammy messages that attract local business owners.
-          </p>
-
-          <!-- Framework Selector -->
-          <label class="form-label" style="margin-bottom: 10px;">Select Proven Marketing Framework:</label>
-          <div class="framework-grid" id="frameworks-container">
-            <!-- Framework cards rendered dynamically -->
-          </div>
-
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 20px;">
-            <div class="form-group">
-              <label class="form-label">Target Niche Context:</label>
-              <select class="form-select" id="studio-niche-select">
-                <!-- Options -->
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Portfolio / Case Study URL:</label>
-              <input type="text" class="form-input" id="studio-portfolio-input" placeholder="https://myportfolio.dev">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Number of Variations:</label>
-              <select class="form-select" id="studio-count-select">
-                <option value="1">1 Unique Post</option>
-                <option value="2">2 Variations</option>
-                <option value="3" selected>3 Variations (Recommended)</option>
-                <option value="5">5 Variations</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Custom Angles or Specific Offer Instructions (Optional):</label>
-            <textarea class="form-textarea" id="studio-custom-prompt" placeholder="e.g. Mention that we build with Next.js for sub-second speeds and include a 14-day delivery guarantee."></textarea>
-          </div>
-
-          <button class="btn btn-primary" id="btn-generate-ai" onclick="generateAiPosts()" style="width: 100%; padding: 14px; font-size: 1rem;">
-            ✨ Generate Tailored Posts with Gemini
-          </button>
         </div>
 
         <!-- Generated Output Section -->
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">Generated Post Variations</h3>
-          </div>
-          <div id="generated-posts-container">
-            <div style="text-align: center; color: var(--text-muted); padding: 30px;">
-              No posts generated yet. Choose a framework above and click "Generate Tailored Posts"!
+        <div class="card bg-base-200 border border-base-100/50 shadow-md">
+          <div class="card-body p-6">
+            <h3 class="font-bold text-base mb-3">Generated Post Variations</h3>
+            <div id="generated-posts-container" class="space-y-4">
+              <div class="text-center text-xs text-base-content/50 py-8">
+                No posts generated yet. Choose a framework above and click "Generate Tailored Posts"!
+              </div>
             </div>
           </div>
         </div>
       </section>
 
+      <!-- ======================================================= -->
       <!-- VIEW 5: QUEUE & SCHEDULER -->
-      <section class="view-panel" id="view-queue">
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">Automated Post Queue</h3>
-            <button class="btn btn-emerald" id="btn-run-queue-now" onclick="triggerProcessQueueNow()">
-              ⚡ Post Next Queue Item Now
-            </button>
-          </div>
+      <!-- ======================================================= -->
+      <section class="view-panel space-y-6" id="view-queue">
+        <div class="card bg-base-200 border border-base-100/50 shadow-md">
+          <div class="card-body p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-bold text-lg">Automated Post Queue</h3>
+              <button class="btn btn-success btn-sm" id="btn-run-queue-now" onclick="triggerProcessQueueNow()">
+                ⚡ Post Next Queue Item Now
+              </button>
+            </div>
 
-          <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: var(--radius-md); padding: 14px; margin-bottom: 20px; font-size: 0.88rem; color: #fde68a;">
-            🛡️ <strong>Anti-Ban Safety Guard</strong>: Posts are automatically spaced out by 15-45 minutes with randomized human typing speed and scrolling simulations.
-          </div>
+            <div class="alert alert-warning py-2 px-4 text-xs mb-4 rounded-lg">
+              <span>🛡️ <strong>Anti-Ban Safety Guard</strong>: Posts are automatically spaced out by 15-45 minutes with randomized human typing speed and scrolling simulations.</span>
+            </div>
 
-          <table class="custom-table">
-            <thead>
-              <tr>
-                <th>Target Group</th>
-                <th>Content Preview</th>
-                <th>Scheduled Time</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="queue-table-body">
-              <!-- Rendered dynamically -->
-            </tbody>
-          </table>
+            <div class="overflow-x-auto">
+              <table class="table table-zebra w-full">
+                <thead>
+                  <tr class="text-xs text-base-content/60 border-b border-base-300">
+                    <th>Target Group</th>
+                    <th>Content Preview</th>
+                    <th>Scheduled Time</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="queue-table-body">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
 
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">Post History Log</h3>
+        <div class="card bg-base-200 border border-base-100/50 shadow-md">
+          <div class="card-body p-6">
+            <h3 class="font-bold text-base mb-4">Post History Log</h3>
+            <div class="overflow-x-auto">
+              <table class="table table-zebra w-full">
+                <thead>
+                  <tr class="text-xs text-base-content/60 border-b border-base-300">
+                    <th>Target Group</th>
+                    <th>Niche</th>
+                    <th>Content Preview</th>
+                    <th>Posted Date / Time</th>
+                  </tr>
+                </thead>
+                <tbody id="history-table-body">
+                  <!-- Rendered dynamically -->
+                </tbody>
+              </table>
+            </div>
           </div>
-          <table class="custom-table">
-            <thead>
-              <tr>
-                <th>Target Group</th>
-                <th>Niche</th>
-                <th>Content Preview</th>
-                <th>Posted Date / Time</th>
-              </tr>
-            </thead>
-            <tbody id="history-table-body">
-              <!-- Rendered dynamically -->
-            </tbody>
-          </table>
         </div>
       </section>
 
+      <!-- ======================================================= -->
       <!-- VIEW 6: SETTINGS & AUTH -->
-      <section class="view-panel" id="view-settings">
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">🔐 Facebook Authentication & Session</h3>
-          </div>
-          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px;">
-            You can authenticate either via local browser window or by importing session cookies (perfect for Render or cloud servers).
-          </p>
+      <!-- ======================================================= -->
+      <section class="view-panel space-y-6" id="view-settings">
+        
+        <!-- FB Authentication Card -->
+        <div class="card bg-base-200 border border-base-100/50 shadow-md">
+          <div class="card-body p-6">
+            <h3 class="font-bold text-lg mb-1">🔐 Facebook Authentication & Session</h3>
+            <p class="text-xs text-base-content/60 mb-5">You can authenticate either via local browser window or by importing session cookies (perfect for Render or cloud servers).</p>
 
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 20px;">
-            <!-- Option 1: Local Window -->
-            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px;">
-              <h4 style="color:#fff; margin-bottom: 8px;">Option 1: Interactive Browser Login (Local)</h4>
-              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
-                Opens a real Chrome window. Log in to Facebook normally (with 2FA) and your session will be saved automatically.
-              </p>
-              <button class="btn btn-primary" id="btn-login-assistant" onclick="triggerLoginAssistant()">
-                🔑 Launch Local Login Window
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Option 1: Local Window -->
+              <div class="bg-base-300/50 border border-base-100/50 rounded-xl p-5">
+                <h4 class="font-bold text-sm mb-1 text-white">Option 1: Interactive Browser Login (Local)</h4>
+                <p class="text-xs text-base-content/70 mb-4">Opens a real Chrome window. Log in to Facebook normally (with 2FA) and your session will be saved automatically.</p>
+                <button class="btn btn-primary btn-sm" id="btn-login-assistant" onclick="triggerLoginAssistant()">
+                  🔑 Launch Local Login Window
+                </button>
+              </div>
+
+              <!-- Option 2: Cookie Import -->
+              <div class="bg-base-300/50 border border-base-100/50 rounded-xl p-5">
+                <h4 class="font-bold text-sm mb-1 text-white">Option 2: Import FB Cookies (Render / Cloud)</h4>
+                <p class="text-xs text-base-content/70 mb-2">Export cookies from your browser (via Cookie-Editor extension) and paste JSON here:</p>
+                <textarea class="textarea textarea-bordered w-full font-mono text-xs h-20" id="import-cookies-text" placeholder='[{"name":"c_user","value":"..."},{"name":"xs","value":"..."}]'></textarea>
+                <button class="btn btn-outline btn-sm mt-3" onclick="triggerImportCookies()">
+                  📥 Import Cookies JSON
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- App & AI Config Card -->
+        <div class="card bg-base-200 border border-base-100/50 shadow-md">
+          <div class="card-body p-6">
+            <h3 class="font-bold text-lg mb-4">⚙️ App & AI Configuration</h3>
+
+            <form id="settings-form" class="space-y-4 max-w-xl">
+              <div>
+                <label class="label text-xs font-semibold py-1">Google Gemini API Key:</label>
+                <input type="password" class="input input-bordered input-sm w-full font-mono" id="config-gemini-key" placeholder="AIzaSy...">
+                <span class="text-xs text-base-content/50 mt-1 block">Get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-primary underline">aistudio.google.com</a>. Fallback templates are used if blank.</span>
+              </div>
+
+              <div>
+                <label class="label text-xs font-semibold py-1">Default Portfolio / Case Study URL:</label>
+                <input type="text" class="input input-bordered input-sm w-full" id="config-portfolio-url" placeholder="https://myportfolio.dev">
+              </div>
+
+              <div>
+                <label class="label text-xs font-semibold py-1">Core Web Development Service Description:</label>
+                <input type="text" class="input input-bordered input-sm w-full" id="config-target-service" placeholder="High-Converting Custom Web Development & Fast Landing Pages">
+              </div>
+
+              <div>
+                <label class="label text-xs font-semibold py-1">Daily Post Safety Limit:</label>
+                <input type="number" class="input input-bordered input-sm w-full" id="config-daily-post-limit" min="1" max="15" value="5">
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-sm">💾 Save Configuration</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Admin Account & Security Card -->
+        <div class="card bg-base-200 border border-base-100/50 shadow-md">
+          <div class="card-body p-6">
+            <h3 class="font-bold text-lg mb-1">👤 Admin Account & Security</h3>
+            <p class="text-xs text-base-content/60 mb-5">Update your admin login username and password. Changes persist across restarts via your database.</p>
+
+            <form id="account-settings-form" class="space-y-4 max-w-xl">
+              <div>
+                <label class="label text-xs font-semibold py-1">Current Password *</label>
+                <input type="password" class="input input-bordered input-sm w-full" id="acc-current-password" placeholder="••••••••" required autocomplete="current-password">
+              </div>
+
+              <div>
+                <label class="label text-xs font-semibold py-1">New Username (Optional)</label>
+                <input type="text" class="input input-bordered input-sm w-full" id="acc-new-username" placeholder="Leave blank to keep current username" autocomplete="username">
+              </div>
+
+              <div>
+                <label class="label text-xs font-semibold py-1">New Password *</label>
+                <input type="password" class="input input-bordered input-sm w-full" id="acc-new-password" placeholder="At least 6 characters" required autocomplete="new-password" minlength="6">
+              </div>
+
+              <div>
+                <label class="label text-xs font-semibold py-1">Confirm New Password *</label>
+                <input type="password" class="input input-bordered input-sm w-full" id="acc-confirm-password" placeholder="Confirm new password" required autocomplete="new-password" minlength="6">
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-sm" id="btn-submit-change-password">
+                🔒 Update Admin Credentials
               </button>
-            </div>
-
-            <!-- Option 2: Cookie Import -->
-            <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px;">
-              <h4 style="color:#fff; margin-bottom: 8px;">Option 2: Import FB Cookies (Render / Cloud)</h4>
-              <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 12px;">
-                Export cookies from your browser (via Cookie-Editor extension) and paste JSON here:
-              </p>
-              <textarea class="form-textarea" id="import-cookies-text" placeholder='[{"name":"c_user","value":"..."},{"name":"xs","value":"..."}]' style="min-height: 80px; font-family: monospace; font-size: 0.8rem;"></textarea>
-              <button class="btn btn-secondary btn-sm" style="margin-top: 10px;" onclick="triggerImportCookies()">
-                📥 Import Cookies JSON
-              </button>
-            </div>
+            </form>
           </div>
         </div>
 
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">⚙️ App & AI Configuration</h3>
-          </div>
-
-          <form id="settings-form">
-            <div class="form-group">
-              <label class="form-label">Google Gemini API Key:</label>
-              <input type="password" class="form-input" id="config-gemini-key" placeholder="AIzaSy...">
-              <small style="color:var(--text-muted); font-size:0.78rem;">Get a free API key at <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--accent-cyan);">aistudio.google.com</a>. Fallback templates are used if left blank.</small>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Default Portfolio / Case Study URL:</label>
-              <input type="text" class="form-input" id="config-portfolio-url" placeholder="https://myportfolio.dev">
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Core Web Development Service Description:</label>
-              <input type="text" class="form-input" id="config-target-service" placeholder="High-Converting Custom Web Development & Fast Landing Pages">
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Daily Post Safety Limit:</label>
-              <input type="number" class="form-input" id="config-daily-post-limit" min="1" max="15" value="5">
-              <small style="color:var(--text-muted); font-size:0.78rem;">Maximum number of automated posts across all groups per 24 hours.</small>
-            </div>
-
-            <button type="submit" class="btn btn-primary">💾 Save Configuration</button>
-          </form>
-        </div>
-
-        <!-- Account & Security Card -->
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">👤 Admin Account & Security</h3>
-          </div>
-          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px;">
-            Update your admin login username and password. Changes persist across restarts via your database.
-          </p>
-
-          <form id="account-settings-form" style="max-width: 500px;">
-            <div class="form-group">
-              <label class="form-label">Current Password *</label>
-              <input type="password" class="form-input" id="acc-current-password" placeholder="••••••••" required autocomplete="current-password">
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">New Username (Optional)</label>
-              <input type="text" class="form-input" id="acc-new-username" placeholder="Leave blank to keep current username" autocomplete="username">
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">New Password *</label>
-              <input type="password" class="form-input" id="acc-new-password" placeholder="At least 6 characters" required autocomplete="new-password" minlength="6">
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Confirm New Password *</label>
-              <input type="password" class="form-input" id="acc-confirm-password" placeholder="Confirm new password" required autocomplete="new-password" minlength="6">
-            </div>
-
-            <button type="submit" class="btn btn-primary" id="btn-submit-change-password">
-              🔒 Update Admin Credentials
-            </button>
-          </form>
-        </div>
       </section>
 
+      <!-- ======================================================= -->
       <!-- VIEW 7: LOGS -->
-      <section class="view-panel" id="view-logs">
-        <div class="card">
-          <div class="card-header">
-            <h3 class="card-title">Live Automation Event Logs</h3>
-            <div style="display: flex; gap: 8px;">
-              <button class="btn btn-secondary btn-sm" onclick="refreshLogs()">🔄 Refresh</button>
-              <button class="btn btn-danger btn-sm" onclick="clearSystemLogs()">🗑️ Clear Logs</button>
+      <!-- ======================================================= -->
+      <section class="view-panel space-y-6" id="view-logs">
+        <div class="card bg-base-200 border border-base-100/50 shadow-md">
+          <div class="card-body p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-bold text-lg">Live Automation Event Logs</h3>
+              <div class="flex gap-2">
+                <button class="btn btn-ghost btn-xs" onclick="refreshLogs()">🔄 Refresh</button>
+                <button class="btn btn-outline btn-error btn-xs" onclick="clearSystemLogs()">🗑️ Clear Logs</button>
+              </div>
             </div>
-          </div>
-          <div class="log-stream" id="log-stream-container">
-            <!-- Rendered dynamically -->
+            <div class="log-stream" id="log-stream-container">
+              <!-- Rendered dynamically -->
+            </div>
           </div>
         </div>
       </section>
 
     </main>
   </div>
-</div>
 
-<!-- ======================================================= -->
-<!-- MODALS -->
-<!-- ======================================================= -->
+  <!-- ======================================================= -->
+  <!-- MODALS -->
+  <!-- ======================================================= -->
 
-<!-- Niche Modal -->
-<div class="modal-overlay" id="niche-modal">
-  <div class="modal-box">
-    <div class="modal-header">
-      <h3 class="modal-title" id="niche-modal-title">Add New Target Niche</h3>
-      <button class="close-btn close-modal-btn">&times;</button>
-    </div>
-    <form id="niche-form">
-      <div class="form-group">
-        <label class="form-label">Niche Display Name *</label>
-        <input type="text" class="form-input" id="niche-form-name" placeholder="e.g. HVAC Company New York" required>
+  <!-- Niche Modal -->
+  <div class="modal-overlay" id="niche-modal">
+    <div class="modal-box-custom">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-lg" id="niche-modal-title">Add New Target Niche</h3>
+        <button class="btn btn-sm btn-circle btn-ghost close-modal-btn">&times;</button>
       </div>
-      <div class="form-group">
-        <label class="form-label">Facebook Search Keyword *</label>
-        <input type="text" class="form-input" id="niche-form-keyword" placeholder="e.g. hvac company new york" required>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Industry Category</label>
-        <input type="text" class="form-input" id="niche-form-industry" placeholder="e.g. HVAC & Climate Services">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Location / Target City</label>
-        <input type="text" class="form-input" id="niche-form-location" placeholder="e.g. New York, NY">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Specific Pitch Angle / Pain Points</label>
-        <textarea class="form-textarea" id="niche-form-angle" placeholder="e.g. Emergency 24/7 call booking buttons and 1-second mobile load speeds"></textarea>
-      </div>
-      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
-        <button type="button" class="btn btn-secondary close-modal-btn">Cancel</button>
-        <button type="submit" class="btn btn-primary">Save Niche</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- Schedule to Queue Modal -->
-<div class="modal-overlay" id="queue-modal">
-  <div class="modal-box">
-    <div class="modal-header">
-      <h3 class="modal-title">Add Post to Automation Queue</h3>
-      <button class="close-btn close-modal-btn">&times;</button>
-    </div>
-    <form id="queue-form">
-      <div class="form-group">
-        <label class="form-label">Select Target Group *</label>
-        <select class="form-select" id="queue-group-select" required>
-          <!-- Populated -->
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Post Content</label>
-        <textarea class="form-textarea" id="queue-post-content" style="min-height: 180px;" required></textarea>
-      </div>
-      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
-        <button type="button" class="btn btn-secondary close-modal-btn">Cancel</button>
-        <button type="submit" class="btn btn-primary">Add to Queue</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- Direct Post Modal -->
-<div class="modal-overlay" id="direct-post-modal">
-  <div class="modal-box">
-    <div class="modal-header">
-      <h3 class="modal-title">Direct Post to Facebook Group</h3>
-      <button class="close-btn close-modal-btn">&times;</button>
-    </div>
-    <form id="direct-post-form">
-      <div class="form-group">
-        <label class="form-label">Select Target Group *</label>
-        <select class="form-select" id="direct-post-group-select" required>
-          <!-- Populated -->
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Post Content</label>
-        <textarea class="form-textarea" id="direct-post-content" style="min-height: 180px;" required></textarea>
-      </div>
-      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
-        <button type="button" class="btn btn-secondary close-modal-btn">Cancel</button>
-        <button type="submit" class="btn btn-emerald" id="btn-submit-direct-post">🚀 Publish Now</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- Admin Login Modal -->
-<div class="modal-overlay" id="admin-login-modal" style="z-index: 9999;">
-  <div class="modal-box" style="max-width: 420px; border: 1px solid rgba(99, 102, 241, 0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.8);">
-    <div style="text-align: center; margin-bottom: 24px;">
-      <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary), var(--accent-cyan)); border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 12px;">⚡</div>
-      <h3 style="font-size: 1.4rem; font-weight: 700; color: #fff;">Admin Sign In</h3>
-      <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">Enter your credentials to access the Facebook Marketer control center.</p>
-    </div>
-    
-    <div id="admin-login-error" style="display: none; background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.3); border-radius: var(--radius-sm); padding: 10px 14px; color: #fca5a5; font-size: 0.85rem; margin-bottom: 16px;"></div>
-
-    <form id="admin-login-form">
-      <div class="form-group">
-        <label class="form-label">Username</label>
-        <input type="text" class="form-input" id="admin-login-username" placeholder="admin" required autocomplete="username">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Password</label>
-        <input type="password" class="form-input" id="admin-login-password" placeholder="••••••••" required autocomplete="current-password">
-      </div>
-      <button type="submit" class="btn btn-primary" id="btn-submit-admin-login" style="width: 100%; padding: 12px; margin-top: 8px;">
-        🔐 Sign In to Dashboard
-      </button>
-    </form>
-    <div style="text-align: center; margin-top: 16px; font-size: 0.78rem; color: var(--text-muted);">
-      Default: <code>admin</code> / <code>admin123</code> (Customize via ADMIN_PASSWORD in Render)
+      <form id="niche-form" class="space-y-4">
+        <div>
+          <label class="label text-xs font-semibold py-1">Niche Display Name *</label>
+          <input type="text" class="input input-bordered input-sm w-full" id="niche-form-name" placeholder="e.g. HVAC Company New York" required>
+        </div>
+        <div>
+          <label class="label text-xs font-semibold py-1">Facebook Search Keyword *</label>
+          <input type="text" class="input input-bordered input-sm w-full" id="niche-form-keyword" placeholder="e.g. hvac company new york" required>
+        </div>
+        <div>
+          <label class="label text-xs font-semibold py-1">Industry Category</label>
+          <input type="text" class="input input-bordered input-sm w-full" id="niche-form-industry" placeholder="e.g. HVAC & Climate Services">
+        </div>
+        <div>
+          <label class="label text-xs font-semibold py-1">Location / Target City</label>
+          <input type="text" class="input input-bordered input-sm w-full" id="niche-form-location" placeholder="e.g. New York, NY">
+        </div>
+        <div>
+          <label class="label text-xs font-semibold py-1">Specific Pitch Angle / Pain Points</label>
+          <textarea class="textarea textarea-bordered w-full h-20 text-sm" id="niche-form-angle" placeholder="e.g. Emergency 24/7 call booking buttons and 1-second mobile load speeds"></textarea>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" class="btn btn-ghost btn-sm close-modal-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Save Niche</button>
+        </div>
+      </form>
     </div>
   </div>
-</div>
 
-<!-- Toast Container -->
-<div id="toast-container"></div>
+  <!-- Schedule to Queue Modal -->
+  <div class="modal-overlay" id="queue-modal">
+    <div class="modal-box-custom">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-lg">Add Post to Automation Queue</h3>
+        <button class="btn btn-sm btn-circle btn-ghost close-modal-btn">&times;</button>
+      </div>
+      <form id="queue-form" class="space-y-4">
+        <div>
+          <label class="label text-xs font-semibold py-1">Select Target Group *</label>
+          <select class="select select-bordered select-sm w-full" id="queue-group-select" required>
+            <!-- Populated -->
+          </select>
+        </div>
+        <div>
+          <label class="label text-xs font-semibold py-1">Post Content</label>
+          <textarea class="textarea textarea-bordered w-full h-40 text-sm" id="queue-post-content" required></textarea>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" class="btn btn-ghost btn-sm close-modal-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Add to Queue</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-<!-- Client Scripts -->
-<script src="/js/api.js"></script>
-<script src="/js/app.js"></script>
+  <!-- Direct Post Modal -->
+  <div class="modal-overlay" id="direct-post-modal">
+    <div class="modal-box-custom">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-lg">Direct Post to Facebook Group</h3>
+        <button class="btn btn-sm btn-circle btn-ghost close-modal-btn">&times;</button>
+      </div>
+      <form id="direct-post-form" class="space-y-4">
+        <div>
+          <label class="label text-xs font-semibold py-1">Select Target Group *</label>
+          <select class="select select-bordered select-sm w-full" id="direct-post-group-select" required>
+            <!-- Populated -->
+          </select>
+        </div>
+        <div>
+          <label class="label text-xs font-semibold py-1">Post Content</label>
+          <textarea class="textarea textarea-bordered w-full h-40 text-sm" id="direct-post-content" required></textarea>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" class="btn btn-ghost btn-sm close-modal-btn">Cancel</button>
+          <button type="submit" class="btn btn-success btn-sm" id="btn-submit-direct-post">🚀 Publish Now</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Admin Login Modal -->
+  <div class="modal-overlay" id="admin-login-modal" style="z-index: 9999;">
+    <div class="modal-box-custom max-w-md border border-primary/40 shadow-2xl">
+      <div class="text-center mb-6">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-primary to-accent inline-flex items-center justify-center text-2xl shadow-lg shadow-primary/20 text-white font-bold mb-3">
+          ⚡
+        </div>
+        <h3 class="font-bold text-xl text-white">Admin Sign In</h3>
+        <p class="text-xs text-base-content/60 mt-1">Enter your credentials to access the Facebook Marketer control center.</p>
+      </div>
+      
+      <div id="admin-login-error" class="alert alert-error text-xs py-2 px-3 mb-4 hidden"></div>
+
+      <form id="admin-login-form" class="space-y-4">
+        <div>
+          <label class="label text-xs font-semibold py-1">Username</label>
+          <input type="text" class="input input-bordered input-sm w-full" id="admin-login-username" placeholder="admin" required autocomplete="username">
+        </div>
+        <div>
+          <label class="label text-xs font-semibold py-1">Password</label>
+          <input type="password" class="input input-bordered input-sm w-full" id="admin-login-password" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary w-full btn-sm mt-2" id="btn-submit-admin-login">
+          🔐 Sign In to Dashboard
+        </button>
+      </form>
+      <div class="text-center mt-4 text-xs text-base-content/40">
+        Default: <code>admin</code> / <code>admin123</code> (Customize via Account Settings)
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <!-- Client Scripts -->
+  <script src="/js/api.js"></script>
+  <script src="/js/app.js"></script>
 
 </body>
 </html>

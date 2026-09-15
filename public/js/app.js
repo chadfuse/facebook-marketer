@@ -286,16 +286,16 @@ function renderRecentHistoryTable(items) {
   if (!container) return;
 
   if (!items || items.length === 0) {
-    container.innerHTML = `<tr><td colspan="4" style="text-align:center; color: var(--text-muted);">No posts published yet. Start by generating tailored copy in the AI Studio!</td></tr>`;
+    container.innerHTML = `<tr><td colspan="4" class="text-center text-xs text-base-content/50 py-6">No posts published yet. Start by generating tailored copy in the AI Studio!</td></tr>`;
     return;
   }
 
   container.innerHTML = items.map(p => `
     <tr>
-      <td><strong>${escapeHtml(p.groupName)}</strong></td>
-      <td><span class="badge badge-discovered">${escapeHtml(p.nicheName || 'General')}</span></td>
-      <td>${new Date(p.postedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} (${new Date(p.postedAt).toLocaleDateString()})</td>
-      <td><span class="badge badge-joined">Published</span></td>
+      <td><strong class="text-white text-xs">${escapeHtml(p.groupName)}</strong></td>
+      <td><span class="badge badge-sm badge-ghost">${escapeHtml(p.nicheName || 'General')}</span></td>
+      <td class="text-xs text-base-content/70">${new Date(p.postedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} (${new Date(p.postedAt).toLocaleDateString()})</td>
+      <td><span class="badge badge-sm badge-success">Published</span></td>
     </tr>
   `).join('');
 }
@@ -308,7 +308,7 @@ function renderNiches() {
   if (!container) return;
 
   if (state.niches.length === 0) {
-    container.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-muted);">No niches added yet. Click "+ Add New Niche" to target your first industry!</td></tr>`;
+    container.innerHTML = `<tr><td colspan="5" class="text-center text-xs text-base-content/50 py-8">No niches added yet. Click "+ Add New Niche" to target your first industry!</td></tr>`;
     return;
   }
 
@@ -319,20 +319,20 @@ function renderNiches() {
     return `
       <tr>
         <td>
-          <strong style="color:#fff; font-size:1rem;">${escapeHtml(n.name)}</strong>
-          <div style="font-size:0.8rem; color:var(--text-muted);">${escapeHtml(n.industry || '')} &bull; ${escapeHtml(n.location || 'Any Region')}</div>
+          <div class="font-bold text-sm text-white">${escapeHtml(n.name)}</div>
+          <div class="text-xs text-base-content/60">${escapeHtml(n.industry || '')} &bull; ${escapeHtml(n.location || 'Any Region')}</div>
         </td>
-        <td><code style="color:var(--accent-cyan); background:rgba(6,182,212,0.1); padding:3px 8px; border-radius:4px;">${escapeHtml(n.keyword)}</code></td>
-        <td style="max-width:280px; font-size:0.85rem; color:var(--text-secondary);">${escapeHtml(n.specificAngle || 'Standard Web Development pitch')}</td>
+        <td><code class="text-xs text-primary bg-primary/10 px-2 py-1 rounded font-mono">${escapeHtml(n.keyword)}</code></td>
+        <td class="max-w-xs text-xs text-base-content/80 truncate">${escapeHtml(n.specificAngle || 'Standard Web Development pitch')}</td>
         <td>
-          <span class="badge badge-discovered">${groupCount} Groups</span>
-          ${joinedCount > 0 ? `<span class="badge badge-joined" style="margin-left:4px;">${joinedCount} Joined</span>` : ''}
+          <span class="badge badge-sm badge-info badge-outline">${groupCount} Groups</span>
+          ${joinedCount > 0 ? `<span class="badge badge-sm badge-success ml-1">${joinedCount} Joined</span>` : ''}
         </td>
         <td>
-          <div style="display:flex; gap:8px;">
-            <button class="btn btn-secondary btn-sm" onclick="triggerSearchNicheGroups('${n.id}')">🔍 Find Groups</button>
-            <button class="btn btn-secondary btn-sm" onclick="editNiche('${n.id}')">✏️ Edit</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteNicheConfirm('${n.id}')">🗑️</button>
+          <div class="flex gap-1.5">
+            <button class="btn btn-ghost btn-xs text-primary" onclick="triggerSearchNicheGroups('${n.id}')">🔍 Find Groups</button>
+            <button class="btn btn-ghost btn-xs" onclick="editNiche('${n.id}')">✏️ Edit</button>
+            <button class="btn btn-ghost btn-xs text-error" onclick="deleteNicheConfirm('${n.id}')">🗑️</button>
           </div>
         </td>
       </tr>
@@ -399,37 +399,37 @@ function renderGroups() {
   if (statusFilter) filtered = filtered.filter(g => g.status === statusFilter);
 
   if (filtered.length === 0) {
-    container.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted); padding:30px;">No groups found. Select a niche and click "Search Facebook Groups" to discover relevant groups!</td></tr>`;
+    container.innerHTML = `<tr><td colspan="6" class="text-center text-xs text-base-content/50 py-8">No groups found. Select a niche and click "Search Facebook Groups" to discover relevant groups!</td></tr>`;
     return;
   }
 
   container.innerHTML = filtered.map(g => {
-    let statusBadge = `<span class="badge badge-discovered">Discovered</span>`;
-    if (g.status === 'joined') statusBadge = `<span class="badge badge-joined">Joined ✅</span>`;
-    if (g.status === 'join_requested') statusBadge = `<span class="badge badge-pending">Join Pending ⏳</span>`;
+    let statusBadge = `<span class="badge badge-sm badge-outline badge-info">Discovered</span>`;
+    if (g.status === 'joined') statusBadge = `<span class="badge badge-sm badge-success">Joined ✅</span>`;
+    if (g.status === 'join_requested') statusBadge = `<span class="badge badge-sm badge-warning">Join Pending ⏳</span>`;
 
     return `
       <tr>
         <td>
-          <a href="${escapeHtml(g.url)}" target="_blank" style="color:#fff; font-weight:600; text-decoration:none; display:flex; align-items:center; gap:6px;">
+          <a href="${escapeHtml(g.url)}" target="_blank" class="font-bold text-sm text-white hover:text-primary transition-colors flex items-center gap-1.5">
             ${escapeHtml(g.name)}
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            <svg class="w-3.5 h-3.5 opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
           </a>
-          <span style="font-size:0.75rem; color:var(--text-muted);">${escapeHtml(g.groupIdentifier || '')}</span>
+          <span class="text-xs text-base-content/50 font-mono">${escapeHtml(g.groupIdentifier || '')}</span>
         </td>
-        <td><span class="badge badge-discovered">${escapeHtml(g.nicheName || 'General')}</span></td>
-        <td>${escapeHtml(g.members || 'Unknown')}</td>
-        <td><span style="font-size:0.85rem; color:var(--text-secondary);">${escapeHtml(g.privacy || 'Public')}</span></td>
+        <td><span class="badge badge-sm badge-ghost">${escapeHtml(g.nicheName || 'General')}</span></td>
+        <td class="text-xs">${escapeHtml(g.members || 'Unknown')}</td>
+        <td class="text-xs text-base-content/70">${escapeHtml(g.privacy || 'Public')}</td>
         <td>${statusBadge}</td>
         <td>
-          <div style="display:flex; gap:6px;">
+          <div class="flex gap-1.5">
             ${g.status !== 'joined' ? `
-              <button class="btn btn-emerald btn-sm" onclick="joinGroupClick('${g.id}')">🚀 Auto-Join</button>
-              <button class="btn btn-secondary btn-sm" title="Mark as Joined" onclick="toggleGroupJoined('${g.id}', 'joined')">Mark Joined</button>
+              <button class="btn btn-success btn-xs" onclick="joinGroupClick('${g.id}')">🚀 Auto-Join</button>
+              <button class="btn btn-ghost btn-xs" title="Mark as Joined" onclick="toggleGroupJoined('${g.id}', 'joined')">Mark Joined</button>
             ` : `
-              <button class="btn btn-primary btn-sm" onclick="openPostModalForGroup('${g.id}')">✍️ Post Now</button>
+              <button class="btn btn-primary btn-xs" onclick="openPostModalForGroup('${g.id}')">✍️ Post Now</button>
             `}
-            <button class="btn btn-danger btn-sm" onclick="deleteGroupClick('${g.id}')">🗑️</button>
+            <button class="btn btn-ghost btn-xs text-error" onclick="deleteGroupClick('${g.id}')">🗑️</button>
           </div>
         </td>
       </tr>
@@ -587,20 +587,20 @@ function renderGeneratedPosts() {
   if (!container) return;
 
   if (state.generatedPosts.length === 0) {
-    container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:30px;">No posts generated yet. Choose a framework and click "Generate Tailored Posts" above!</div>`;
+    container.innerHTML = `<div class="text-center text-xs text-base-content/50 py-8">No posts generated yet. Choose a framework above and click "Generate Tailored Posts"!</div>`;
     return;
   }
 
   container.innerHTML = state.generatedPosts.map((postText, idx) => `
-    <div class="generated-post-card">
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <span class="badge badge-discovered" style="font-size:0.8rem;">Variation #${idx + 1} &bull; ${state.frameworks[state.selectedFramework]?.name || 'Framework'}</span>
-        <button class="btn btn-secondary btn-sm" onclick="copyToClipboard(${idx})">📋 Copy Text</button>
+    <div class="card bg-base-300/60 border border-base-100/60 p-4 rounded-xl">
+      <div class="flex justify-between items-center mb-2">
+        <span class="badge badge-sm badge-info badge-outline">Variation #${idx + 1} &bull; ${state.frameworks[state.selectedFramework]?.name || 'Framework'}</span>
+        <button class="btn btn-ghost btn-xs text-primary" onclick="copyToClipboard(${idx})">📋 Copy Text</button>
       </div>
       <div class="post-content-preview" id="post-preview-${idx}">${escapeHtml(postText)}</div>
-      <div style="display:flex; justify-content:flex-end; gap:8px;">
-        <button class="btn btn-primary btn-sm" onclick="openScheduleModal(${idx})">📅 Schedule to Group</button>
-        <button class="btn btn-emerald btn-sm" onclick="openDirectPostModal(${idx})">🚀 Direct Post Now</button>
+      <div class="flex justify-end gap-2 mt-2">
+        <button class="btn btn-primary btn-xs" onclick="openScheduleModal(${idx})">📅 Schedule to Group</button>
+        <button class="btn btn-success btn-xs" onclick="openDirectPostModal(${idx})">🚀 Direct Post Now</button>
       </div>
     </div>
   `).join('');
@@ -673,16 +673,16 @@ function renderQueueAndHistory() {
 
   if (queueContainer) {
     if (state.queue.length === 0) {
-      queueContainer.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-muted); padding:20px;">Queue is empty. Generate posts in AI Studio and schedule them!</td></tr>`;
+      queueContainer.innerHTML = `<tr><td colspan="5" class="text-center text-xs text-base-content/50 py-6">Queue is empty. Generate posts in AI Studio and schedule them!</td></tr>`;
     } else {
       queueContainer.innerHTML = state.queue.map(q => `
         <tr>
-          <td><strong>${escapeHtml(q.groupName)}</strong></td>
-          <td style="max-width:300px; font-size:0.85rem; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(q.content)}</td>
-          <td>${new Date(q.scheduledTime || q.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
-          <td><span class="badge ${q.status === 'completed' ? 'badge-joined' : q.status === 'failed' ? 'badge-pending' : 'badge-discovered'}">${escapeHtml(q.status)}</span></td>
+          <td><strong class="text-white text-xs">${escapeHtml(q.groupName)}</strong></td>
+          <td class="max-w-xs text-xs text-base-content/80 truncate">${escapeHtml(q.content)}</td>
+          <td class="text-xs text-base-content/70">${new Date(q.scheduledTime || q.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
+          <td><span class="badge badge-sm ${q.status === 'completed' ? 'badge-success' : q.status === 'failed' ? 'badge-warning' : 'badge-info badge-outline'}">${escapeHtml(q.status)}</span></td>
           <td>
-            <button class="btn btn-danger btn-sm" onclick="removeQueueItem('${q.id}')">🗑️</button>
+            <button class="btn btn-ghost btn-xs text-error" onclick="removeQueueItem('${q.id}')">🗑️</button>
           </td>
         </tr>
       `).join('');
@@ -691,14 +691,14 @@ function renderQueueAndHistory() {
 
   if (historyContainer) {
     if (state.history.length === 0) {
-      historyContainer.innerHTML = `<tr><td colspan="4" style="text-align:center; color: var(--text-muted); padding:20px;">No posting history yet.</td></tr>`;
+      historyContainer.innerHTML = `<tr><td colspan="4" class="text-center text-xs text-base-content/50 py-6">No posting history yet.</td></tr>`;
     } else {
       historyContainer.innerHTML = state.history.map(h => `
         <tr>
-          <td><strong>${escapeHtml(h.groupName)}</strong></td>
-          <td><span class="badge badge-discovered">${escapeHtml(h.nicheName || '')}</span></td>
-          <td style="max-width:320px; font-size:0.85rem; color:var(--text-secondary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(h.content)}</td>
-          <td>${new Date(h.postedAt).toLocaleString()}</td>
+          <td><strong class="text-white text-xs">${escapeHtml(h.groupName)}</strong></td>
+          <td><span class="badge badge-sm badge-ghost">${escapeHtml(h.nicheName || '')}</span></td>
+          <td class="max-w-xs text-xs text-base-content/80 truncate">${escapeHtml(h.content)}</td>
+          <td class="text-xs text-base-content/70">${new Date(h.postedAt).toLocaleString()}</td>
         </tr>
       `).join('');
     }

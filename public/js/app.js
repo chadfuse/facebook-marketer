@@ -101,6 +101,81 @@ function showToast(message, type = 'info') {
   }, 4000);
 }
 
+// ----------------------------------------------------------------
+// 💀 DAISYUI SKELETON LOADERS
+// ----------------------------------------------------------------
+function renderTableSkeleton(tbodyId, columns = 6, rows = 5, message = '') {
+  const container = document.getElementById(tbodyId);
+  if (!container) return;
+
+  const headerNotice = message ? `
+    <tr>
+      <td colspan="${columns}" class="py-3 px-4 bg-base-300/40 text-center">
+        <div class="flex items-center justify-center gap-2 text-xs font-semibold text-primary animate-pulse">
+          <span class="loading loading-spinner loading-xs text-primary"></span>
+          <span>${escapeHtml(message)}</span>
+        </div>
+      </td>
+    </tr>
+  ` : '';
+
+  const widthVariants = ['w-3/4', 'w-1/2', 'w-2/3', 'w-4/5', 'w-3/5', 'w-24'];
+  const skeletonRows = Array.from({ length: rows }).map((_, i) => `
+    <tr class="animate-pulse">
+      ${Array.from({ length: columns }).map((_, c) => {
+        if (c === 0 && columns >= 6) {
+          return `<td><div class="skeleton h-4 w-4 rounded"></div></td>`;
+        }
+        const w = widthVariants[(i + c) % widthVariants.length];
+        return `<td><div class="skeleton h-3.5 ${w} rounded opacity-60"></div></td>`;
+      }).join('')}
+    </tr>
+  `).join('');
+
+  container.innerHTML = headerNotice + skeletonRows;
+}
+
+function renderFrameworkCardsSkeleton() {
+  const container = document.getElementById('frameworks-container');
+  if (!container) return;
+  container.innerHTML = Array.from({ length: 4 }).map(() => `
+    <div class="framework-card animate-pulse">
+      <div class="skeleton h-4 w-3/4 mb-2.5 rounded"></div>
+      <div class="skeleton h-3 w-full mb-1.5 rounded opacity-50"></div>
+      <div class="skeleton h-3 w-4/5 rounded opacity-50"></div>
+    </div>
+  `).join('');
+}
+
+function renderAiPostSkeleton() {
+  const container = document.getElementById('generated-posts-container');
+  if (!container) return;
+  container.innerHTML = Array.from({ length: 2 }).map(() => `
+    <div class="card bg-base-300/60 border border-base-100 p-5 animate-pulse mb-4">
+      <div class="flex justify-between items-center mb-3">
+        <div class="skeleton h-4 w-1/3 rounded"></div>
+        <div class="skeleton h-6 w-20 rounded"></div>
+      </div>
+      <div class="skeleton h-3.5 w-full mb-2 rounded opacity-70"></div>
+      <div class="skeleton h-3.5 w-5/6 mb-2 rounded opacity-70"></div>
+      <div class="skeleton h-3.5 w-4/5 mb-4 rounded opacity-70"></div>
+      <div class="flex gap-2 justify-end">
+        <div class="skeleton h-7 w-24 rounded"></div>
+        <div class="skeleton h-7 w-24 rounded"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function initAllSkeletons() {
+  renderTableSkeleton('groups-table-body', 7, 5);
+  renderTableSkeleton('niches-table-body', 5, 3);
+  renderTableSkeleton('recent-posts-list', 4, 3);
+  renderTableSkeleton('queue-table-body', 6, 3);
+  renderTableSkeleton('history-table-body', 5, 3);
+  renderFrameworkCardsSkeleton();
+}
+
 // Navigation Handling
 function initNavigation() {
   const navItems = document.querySelectorAll('.nav-item');
@@ -158,6 +233,7 @@ function switchView(viewName) {
 
 // Data Fetching
 async function fetchAllData() {
+  initAllSkeletons();
   try {
     const [niches, groups, frameworks, config, auth, queue, history, autopilot] = await Promise.all([
       API.getNiches(),
@@ -185,6 +261,9 @@ async function fetchAllData() {
     renderFrameworkCards();
     loadOverviewStats();
     populateSettingsForm();
+    renderGroups();
+    renderNiches();
+    renderQueueAndHistory();
   } catch (err) {
     console.error('Error fetching initial data:', err);
   }
@@ -682,22 +761,26 @@ async function triggerImportMyGroups() {
   const btn = document.getElementById('btn-import-my-groups');
   if (btn) {
     btn.disabled = true;
-    btn.innerHTML = '⏳ Scanning Facebook Groups...';
+    btn.innerHTML = '<span class="loading loading-spinner loading-xs"></span> Scanning Facebook Groups...';
   }
   showToast('Connecting to Facebook to import all groups you have joined...', 'info');
+  renderTableSkeleton('groups-table-body', 7, 6, 'Scanning Facebook /groups/joins/ for your existing groups...');
 
   try {
     const res = await API.importMyGroups();
     if (res.success) {
       state.groups = await API.getGroups();
+      state.groupsPage = 1;
       renderGroups();
       loadOverviewStats();
       showToast(`🎉 Imported ${res.importedCount} new groups! Total joined: ${res.totalJoinedCount}`, 'success');
     } else {
+      renderGroups();
       showToast(res.error || 'Failed to import joined groups', 'error');
     }
     refreshLogs();
   } catch (err) {
+    renderGroups();
     showToast('Import error: ' + err.message, 'error');
   } finally {
     if (btn) {
@@ -746,9 +829,10 @@ async function triggerSyncGroupStatuses(includeDiscovered = true) {
   const btn = document.getElementById('btn-sync-group-statuses');
   if (btn) {
     btn.disabled = true;
-    btn.innerText = '⏳ Auto-Detecting Statuses...';
+    btn.innerHTML = '<span class="loading loading-spinner loading-xs"></span> Auto-Detecting Statuses...';
   }
   showToast('Visiting group URLs on Facebook to auto-detect your live membership status...', 'info');
+  renderTableSkeleton('groups-table-body', 7, 6, 'Live-verifying Facebook membership statuses & composer access...');
 
   try {
     const res = await API.syncGroupStatuses(includeDiscovered);
@@ -762,15 +846,17 @@ async function triggerSyncGroupStatuses(includeDiscovered = true) {
         showToast(`Checked ${res.checkedCount} groups on Facebook.`, 'info');
       }
     } else {
+      renderGroups();
       showToast(res.message || 'No groups to check', 'info');
     }
     refreshLogs();
   } catch (err) {
+    renderGroups();
     showToast('Sync error: ' + err.message, 'error');
   } finally {
     if (btn) {
       btn.disabled = false;
-      btn.innerText = '⚡ Auto-Detect & Sync Statuses';
+      btn.innerHTML = '⚡ Auto-Detect & Sync Statuses';
     }
   }
 }
@@ -791,22 +877,26 @@ async function executeGroupSearch(nicheId) {
   const searchBtn = document.getElementById('btn-run-group-search');
   if (searchBtn) {
     searchBtn.disabled = true;
-    searchBtn.innerHTML = `⏳ Searching Facebook...`;
+    searchBtn.innerHTML = `<span class="loading loading-spinner loading-xs"></span> Searching Facebook...`;
   }
 
   showToast('Starting Facebook group discovery in background...', 'info');
+  renderTableSkeleton('groups-table-body', 7, 6, 'Searching Facebook keyword index & scrolling for active groups...');
 
   try {
     const res = await API.searchGroups(nicheId);
     if (res.success) {
       showToast(`Discovered ${res.count} Facebook groups!`, 'success');
       state.groups = await API.getGroups();
+      state.groupsPage = 1;
       renderGroups();
       loadOverviewStats();
     } else {
+      renderGroups();
       showToast(res.error || 'Failed to search groups', 'error');
     }
   } catch (err) {
+    renderGroups();
     showToast('Search failed: ' + err.message, 'error');
   } finally {
     if (searchBtn) {
@@ -851,7 +941,9 @@ async function deleteGroupClick(groupId) {
   try {
     await API.deleteGroup(groupId);
     state.groups = state.groups.filter(g => g.id !== groupId);
+    state.selectedGroupIds.delete(groupId);
     renderGroups();
+    loadOverviewStats();
     showToast('Group removed', 'info');
   } catch (e) {
     showToast('Failed to remove group', 'error');
@@ -891,10 +983,11 @@ async function generateAiPosts() {
   const btn = document.getElementById('btn-generate-ai');
   if (btn) {
     btn.disabled = true;
-    btn.innerHTML = `✨ Generating with Gemini AI...`;
+    btn.innerHTML = `<span class="loading loading-spinner loading-xs"></span> Generating with Gemini AI...`;
   }
 
   showToast('Gemini is generating high-converting post variations...', 'info');
+  renderAiPostSkeleton();
 
   try {
     const res = await API.generatePosts({
@@ -910,9 +1003,11 @@ async function generateAiPosts() {
       renderGeneratedPosts();
       showToast(`Generated ${res.posts.length} post variation(s)!`, 'success');
     } else {
+      renderGeneratedPosts();
       showToast(res.error || 'Failed to generate posts', 'error');
     }
   } catch (err) {
+    renderGeneratedPosts();
     showToast('Generation error: ' + err.message, 'error');
   } finally {
     if (btn) {

@@ -94,6 +94,9 @@ const API = {
     method: 'POST',
     body: JSON.stringify({ groupId })
   }),
+  syncGroupStatuses: () => authFetch('/api/groups/sync-status', {
+    method: 'POST'
+  }),
   updateGroupStatus: (groupId, status, canPost) => authFetch(`/api/groups/${groupId}/status`, {
     method: 'PATCH',
     body: JSON.stringify({ status, canPost })

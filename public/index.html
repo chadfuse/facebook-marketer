@@ -254,7 +254,15 @@
       <section class="view-panel space-y-6" id="view-groups">
         <div class="card bg-base-200 border border-base-100/50 shadow-md">
           <div class="card-body p-6">
-            <h3 class="font-bold text-lg mb-2">Facebook Group Discovery & Auto-Joiner</h3>
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+              <div>
+                <h3 class="font-bold text-lg">Facebook Group Discovery & Auto-Joiner</h3>
+                <p class="text-xs text-base-content/60">Discover active groups, manage join requests, and see which groups have already accepted you.</p>
+              </div>
+              <button class="btn btn-outline btn-success btn-sm" id="btn-sync-group-statuses" onclick="triggerSyncGroupStatuses()">
+                🔄 Check & Sync Approvals
+              </button>
+            </div>
 
             <div class="flex flex-col md:flex-row gap-3 items-end mb-6">
               <div class="flex-1 w-full">
@@ -268,21 +276,28 @@
               </button>
             </div>
 
-            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-              <div class="flex gap-2">
+            <!-- Status Filter Tabs (DaisyUI) -->
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4 border-b border-base-100/50 pb-3">
+              <div class="flex flex-wrap gap-1.5" id="group-status-tab-buttons">
+                <button class="btn btn-xs btn-active group-tab-btn" data-status="" onclick="setGroupStatusFilter('')">
+                  All Groups (<span id="tab-count-all">0</span>)
+                </button>
+                <button class="btn btn-xs btn-ghost text-success group-tab-btn" data-status="joined" onclick="setGroupStatusFilter('joined')">
+                  ✅ Accepted & Ready (<span id="tab-count-joined">0</span>)
+                </button>
+                <button class="btn btn-xs btn-ghost text-warning group-tab-btn" data-status="join_requested" onclick="setGroupStatusFilter('join_requested')">
+                  ⏳ Pending Approval (<span id="tab-count-pending">0</span>)
+                </button>
+                <button class="btn btn-xs btn-ghost text-info group-tab-btn" data-status="discovered" onclick="setGroupStatusFilter('discovered')">
+                  🔍 Discovered (<span id="tab-count-discovered">0</span>)
+                </button>
+              </div>
+
+              <div class="flex items-center gap-2">
                 <select class="select select-bordered select-xs" id="group-filter-niche">
                   <option value="">All Niches</option>
                 </select>
-                <select class="select select-bordered select-xs" id="group-filter-status">
-                  <option value="">All Statuses</option>
-                  <option value="joined">Joined</option>
-                  <option value="join_requested">Pending Approval</option>
-                  <option value="discovered">Discovered</option>
-                </select>
               </div>
-              <span class="text-xs text-base-content/60">
-                🛡️ Tip: Max 5-10 group joins per day to prevent verification challenges.
-              </span>
             </div>
 
             <div class="overflow-x-auto">

@@ -69,7 +69,7 @@ async function searchGroupsForNiche(nicheId) {
             }
 
             let isJoined = false;
-            if (textContent.includes('Joined') || textContent.includes('Manage')) {
+            if (textContent.includes('Joined') || textContent.includes('Manage') || textContent.includes('Joined Group')) {
               isJoined = true;
             }
 
@@ -101,6 +101,7 @@ async function searchGroupsForNiche(nicheId) {
           existing.updatedAt = new Date().toISOString();
           if (raw.isJoined && existing.status !== 'joined') {
             existing.status = 'joined';
+            existing.canPost = true;
           }
           discoveredGroups.push(existing);
         } else {
@@ -226,6 +227,65 @@ async function joinGroup(groupId) {
   });
 }
 
+/**
+ * Checks all pending groups to verify if admin has accepted our join request
+ */
+async function checkMembershipStatuses() {
+  return withBrowserLock(async () => {
+    const db = getDatabase();
+    const groups = db.groups || [];
+    const pendingGroups = groups.filter(g => g.status === 'join_requested');
+
+    if (pendingGroups.length === 0) {
+      return { checkedCount: 0, newlyAcceptedCount: 0, message: 'No pending join requests to check' };
+    }
+
+    logEvent('info', `Checking membership status for ${pendingGroups.length} pending group(s)...`);
+
+    let context = null;
+    let page = null;
+    let newlyAcceptedCount = 0;
+
+    try {
+      context = await getAuthenticatedContext({ headless: true });
+      page = await context.newPage();
+      await setupLowMemoryRouteBlocking(page);
+
+      for (const group of pendingGroups) {
+        try {
+          await page.goto(group.url, { waitUntil: 'domcontentloaded', timeout: 25000 });
+          await page.waitForTimeout(2000);
+
+          const pageText = await page.evaluate(() => document.body.innerText);
+          const hasComposer = await page.$('div[role="button"]:has-text("Write something..."), span:has-text("Write something..."), div[role="button"]:has-text("Create a public post")');
+
+          if (hasComposer || pageText.includes('Joined') || pageText.includes('Write something...') || pageText.includes('Manage')) {
+            group.status = 'joined';
+            group.canPost = true;
+            group.updatedAt = new Date().toISOString();
+            newlyAcceptedCount++;
+            logEvent('success', `🎉 Admin accepted join request for "${group.name}"! Status updated to Joined.`);
+          } else if (pageText.includes('Join group') || pageText.includes('Join Group')) {
+            // Request was declined or expired
+            group.status = 'discovered';
+            group.updatedAt = new Date().toISOString();
+          }
+        } catch (e) {
+          // Skip on individual group error
+        }
+      }
+
+      saveDatabase(db);
+      await context.close();
+      return { checkedCount: pendingGroups.length, newlyAcceptedCount, success: true };
+    } catch (err) {
+      if (context) await context.close().catch(() => {});
+      logEvent('error', `Error checking membership statuses: ${err.message}`);
+      throw err;
+    }
+  });
+}
+
 function updateGroupStatus(groupId, updates) {
   const db = getDatabase();
   const group = (db.groups || []).find(g => g.id === groupId);
@@ -242,5 +302,6 @@ function updateGroupStatus(groupId, updates) {
 module.exports = {
   searchGroupsForNiche,
   joinGroup,
+  checkMembershipStatuses,
   updateGroupStatus
 };

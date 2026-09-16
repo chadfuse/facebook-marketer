@@ -388,28 +388,78 @@ function populateNicheSelectDropdowns() {
   });
 }
 
+let currentGroupStatusFilter = '';
+
+function setGroupStatusFilter(status) {
+  currentGroupStatusFilter = status;
+  
+  // Update tab active classes
+  document.querySelectorAll('.group-tab-btn').forEach(btn => {
+    if (btn.getAttribute('data-status') === status) {
+      btn.className = 'btn btn-xs btn-active group-tab-btn';
+    } else {
+      const s = btn.getAttribute('data-status');
+      const textClass = s === 'joined' ? 'text-success' : s === 'join_requested' ? 'text-warning' : s === 'discovered' ? 'text-info' : '';
+      btn.className = `btn btn-xs btn-ghost ${textClass} group-tab-btn`;
+    }
+  });
+
+  renderGroups();
+}
+
+function updateGroupTabCounts() {
+  const groups = state.groups || [];
+  const allCount = groups.length;
+  const joinedCount = groups.filter(g => g.status === 'joined').length;
+  const pendingCount = groups.filter(g => g.status === 'join_requested').length;
+  const discoveredCount = groups.filter(g => g.status === 'discovered').length;
+
+  const elAll = document.getElementById('tab-count-all');
+  const elJoined = document.getElementById('tab-count-joined');
+  const elPending = document.getElementById('tab-count-pending');
+  const elDiscovered = document.getElementById('tab-count-discovered');
+
+  if (elAll) elAll.innerText = allCount;
+  if (elJoined) elJoined.innerText = joinedCount;
+  if (elPending) elPending.innerText = pendingCount;
+  if (elDiscovered) elDiscovered.innerText = discoveredCount;
+}
+
 function renderGroups() {
   const container = document.getElementById('groups-table-body');
   const nicheFilter = document.getElementById('group-filter-niche')?.value || '';
-  const statusFilter = document.getElementById('group-filter-status')?.value || '';
+  const statusFilter = currentGroupStatusFilter;
   if (!container) return;
 
-  let filtered = state.groups;
+  updateGroupTabCounts();
+
+  let filtered = state.groups || [];
   if (nicheFilter) filtered = filtered.filter(g => g.nicheId === nicheFilter);
   if (statusFilter) filtered = filtered.filter(g => g.status === statusFilter);
 
   if (filtered.length === 0) {
-    container.innerHTML = `<tr><td colspan="6" class="text-center text-xs text-base-content/50 py-8">No groups found. Select a niche and click "Search Facebook Groups" to discover relevant groups!</td></tr>`;
+    const emptyMsg = statusFilter === 'joined'
+      ? 'No accepted groups yet. Submit join requests and click "Check & Sync Approvals" once admins accept!'
+      : statusFilter === 'join_requested'
+      ? 'No pending join requests currently waiting for approval.'
+      : 'No groups found. Select a niche and click "Search FB Groups" to discover relevant groups!';
+    container.innerHTML = `<tr><td colspan="6" class="text-center text-xs text-base-content/50 py-8">${emptyMsg}</td></tr>`;
     return;
   }
 
   container.innerHTML = filtered.map(g => {
     let statusBadge = `<span class="badge badge-sm badge-outline badge-info">Discovered</span>`;
-    if (g.status === 'joined') statusBadge = `<span class="badge badge-sm badge-success">Joined ✅</span>`;
-    if (g.status === 'join_requested') statusBadge = `<span class="badge badge-sm badge-warning">Join Pending ⏳</span>`;
+    let rowHighlightClass = '';
+
+    if (g.status === 'joined') {
+      statusBadge = `<span class="badge badge-sm badge-success font-semibold">✅ Accepted & Member</span>`;
+      rowHighlightClass = 'bg-success/5 hover:bg-success/10 transition-colors';
+    } else if (g.status === 'join_requested') {
+      statusBadge = `<span class="badge badge-sm badge-warning font-semibold">⏳ Pending Approval</span>`;
+    }
 
     return `
-      <tr>
+      <tr class="${rowHighlightClass}">
         <td>
           <a href="${escapeHtml(g.url)}" target="_blank" class="font-bold text-sm text-white hover:text-primary transition-colors flex items-center gap-1.5">
             ${escapeHtml(g.name)}
@@ -418,14 +468,14 @@ function renderGroups() {
           <span class="text-xs text-base-content/50 font-mono">${escapeHtml(g.groupIdentifier || '')}</span>
         </td>
         <td><span class="badge badge-sm badge-ghost">${escapeHtml(g.nicheName || 'General')}</span></td>
-        <td class="text-xs">${escapeHtml(g.members || 'Unknown')}</td>
+        <td class="text-xs font-medium">${escapeHtml(g.members || 'Unknown')}</td>
         <td class="text-xs text-base-content/70">${escapeHtml(g.privacy || 'Public')}</td>
         <td>${statusBadge}</td>
         <td>
           <div class="flex gap-1.5">
             ${g.status !== 'joined' ? `
               <button class="btn btn-success btn-xs" onclick="joinGroupClick('${g.id}')">🚀 Auto-Join</button>
-              <button class="btn btn-ghost btn-xs" title="Mark as Joined" onclick="toggleGroupJoined('${g.id}', 'joined')">Mark Joined</button>
+              <button class="btn btn-ghost btn-xs text-success" title="Mark as Joined if accepted" onclick="toggleGroupJoined('${g.id}', 'joined')">Mark Accepted</button>
             ` : `
               <button class="btn btn-primary btn-xs" onclick="openPostModalForGroup('${g.id}')">✍️ Post Now</button>
             `}
@@ -435,6 +485,39 @@ function renderGroups() {
       </tr>
     `;
   }).join('');
+}
+
+async function triggerSyncGroupStatuses() {
+  const btn = document.getElementById('btn-sync-group-statuses');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerText = '⏳ Checking Approvals...';
+  }
+  showToast('Checking pending group URLs to detect admin acceptances...', 'info');
+
+  try {
+    const res = await API.syncGroupStatuses();
+    if (res.success) {
+      state.groups = await API.getGroups();
+      renderGroups();
+      loadOverviewStats();
+      if (res.newlyAcceptedCount > 0) {
+        showToast(`🎉 Found ${res.newlyAcceptedCount} newly accepted group(s)! Status updated to Member.`, 'success');
+      } else {
+        showToast(`Checked ${res.checkedCount} pending groups. No new approvals detected yet.`, 'info');
+      }
+    } else {
+      showToast(res.message || 'No pending groups to check', 'info');
+    }
+    refreshLogs();
+  } catch (err) {
+    showToast('Sync error: ' + err.message, 'error');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerText = '🔄 Check & Sync Approvals';
+    }
+  }
 }
 
 async function triggerSearchNicheGroups(nicheId) {

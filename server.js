@@ -28,6 +28,7 @@ const {
 const {
   searchGroupsForNiche,
   joinGroup,
+  checkMembershipStatuses,
   updateGroupStatus
 } = require('./services/fb-groups');
 
@@ -243,6 +244,15 @@ app.post('/api/groups/join', async (req, res) => {
 
   try {
     const result = await joinGroup(groupId);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/groups/sync-status', async (req, res) => {
+  try {
+    const result = await checkMembershipStatuses();
     res.json(result);
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

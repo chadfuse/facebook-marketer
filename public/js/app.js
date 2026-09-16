@@ -167,7 +167,29 @@ function renderAiPostSkeleton() {
   `).join('');
 }
 
+function renderStatSkeletons() {
+  const statIds = ['stat-niches', 'stat-groups', 'stat-joined', 'stat-pending', 'stat-queued', 'stat-today'];
+  statIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.innerHTML = `<div class="skeleton h-7 ${id === 'stat-today' ? 'w-20' : 'w-14'} rounded"></div>`;
+    }
+  });
+}
+
+function renderTabCountSkeletons() {
+  const tabIds = ['tab-count-all', 'tab-count-joined', 'tab-count-pending', 'tab-count-discovered', 'tab-count-rejected'];
+  tabIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.innerHTML = `<span class="skeleton inline-block h-3 w-4 rounded align-middle opacity-60"></span>`;
+    }
+  });
+}
+
 function initAllSkeletons() {
+  renderStatSkeletons();
+  renderTabCountSkeletons();
   renderTableSkeleton('groups-table-body', 7, 5);
   renderTableSkeleton('niches-table-body', 5, 3);
   renderTableSkeleton('recent-posts-list', 4, 3);

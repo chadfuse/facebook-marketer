@@ -27,6 +27,9 @@ const {
 
 const {
   searchGroupsForNiche,
+  importMyJoinedGroups,
+  verifyGroupMembership,
+  addGroupByDirectUrl,
   joinGroup,
   checkMembershipStatuses,
   updateGroupStatus
@@ -236,6 +239,44 @@ app.post('/api/groups/search', async (req, res) => {
   }
 });
 
+app.post('/api/groups/import-my-groups', async (req, res) => {
+  try {
+    const result = await importMyJoinedGroups();
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/groups/add-by-url', (req, res) => {
+  const { url, nicheId, name, status } = req.body;
+  if (!url) {
+    return res.status(400).json({ error: 'Group URL is required' });
+  }
+
+  try {
+    const group = addGroupByDirectUrl({
+      url,
+      nicheId,
+      customName: name,
+      status: status || 'joined'
+    });
+    res.status(201).json({ success: true, group });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+app.post('/api/groups/:id/verify', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await verifyGroupMembership(id);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 app.post('/api/groups/join', async (req, res) => {
   const { groupId } = req.body;
   if (!groupId) {
@@ -251,8 +292,9 @@ app.post('/api/groups/join', async (req, res) => {
 });
 
 app.post('/api/groups/sync-status', async (req, res) => {
+  const { includeDiscovered } = req.body || {};
   try {
-    const result = await checkMembershipStatuses();
+    const result = await checkMembershipStatuses({ includeDiscovered: Boolean(includeDiscovered) });
     res.json(result);
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

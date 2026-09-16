@@ -259,9 +259,17 @@
                 <h3 class="font-bold text-lg">Facebook Group Discovery & Auto-Joiner</h3>
                 <p class="text-xs text-base-content/60">Discover active groups, manage join requests, and see which groups have already accepted you.</p>
               </div>
-              <button class="btn btn-outline btn-success btn-sm" id="btn-sync-group-statuses" onclick="triggerSyncGroupStatuses()">
-                🔄 Check & Sync Approvals
-              </button>
+              <div class="flex flex-wrap items-center gap-2">
+                <button class="btn btn-outline btn-info btn-sm" id="btn-import-my-groups" onclick="triggerImportMyGroups()" title="Scrapes Facebook for all groups you are already joined to">
+                  📥 Import My Joined Groups
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="openAddGroupModal()">
+                  ➕ Add Group by Link
+                </button>
+                <button class="btn btn-outline btn-success btn-sm" id="btn-sync-group-statuses" onclick="triggerSyncGroupStatuses()">
+                  🔄 Verify Approvals
+                </button>
+              </div>
             </div>
 
             <div class="flex flex-col md:flex-row gap-3 items-end mb-6">
@@ -599,6 +607,45 @@
         <div class="flex justify-end gap-2 pt-2">
           <button type="button" class="btn btn-ghost btn-sm close-modal-btn">Cancel</button>
           <button type="submit" class="btn btn-primary btn-sm">Save Niche</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Group by URL Modal -->
+  <div class="modal-overlay" id="add-group-modal">
+    <div class="modal-box-custom">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-lg">➕ Add Facebook Group by URL</h3>
+        <button class="btn btn-sm btn-circle btn-ghost close-modal-btn">&times;</button>
+      </div>
+      <form id="add-group-form" class="space-y-4">
+        <div>
+          <label class="label text-xs font-semibold py-1">Facebook Group URL *</label>
+          <input type="url" class="input input-bordered input-sm w-full" id="add-group-url" placeholder="https://www.facebook.com/groups/architecture.jobs.philippines/" required>
+          <span class="text-xs text-base-content/50 mt-1 block">Paste any group link. The app will extract the clean group ID.</span>
+        </div>
+        <div>
+          <label class="label text-xs font-semibold py-1">Group Display Name (Optional)</label>
+          <input type="text" class="input input-bordered input-sm w-full" id="add-group-name" placeholder="e.g. Architecture Jobs Philippines">
+        </div>
+        <div>
+          <label class="label text-xs font-semibold py-1">Assign to Niche</label>
+          <select class="select select-bordered select-sm w-full" id="add-group-niche-select">
+            <!-- Populated -->
+          </select>
+        </div>
+        <div>
+          <label class="label text-xs font-semibold py-1">Current Membership Status</label>
+          <select class="select select-bordered select-sm w-full" id="add-group-status-select">
+            <option value="joined" selected>✅ Already Joined (Member / Can Post)</option>
+            <option value="join_requested">⏳ Pending Approval</option>
+            <option value="discovered">🔍 Discovered (Not joined yet)</option>
+          </select>
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" class="btn btn-ghost btn-sm close-modal-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm" id="btn-submit-add-group">Save Group</button>
         </div>
       </form>
     </div>

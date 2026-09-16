@@ -374,7 +374,7 @@ async function deleteNicheConfirm(id) {
 // 👥 GROUPS DISCOVERY & JOINING
 // ----------------------------------------------------------------
 function populateNicheSelectDropdowns() {
-  const selects = ['group-filter-niche', 'search-niche-select', 'studio-niche-select', 'queue-niche-select'];
+  const selects = ['group-filter-niche', 'search-niche-select', 'studio-niche-select', 'queue-niche-select', 'add-group-niche-select'];
   selects.forEach(selId => {
     const sel = document.getElementById(selId);
     if (!sel) return;
@@ -439,10 +439,10 @@ function renderGroups() {
 
   if (filtered.length === 0) {
     const emptyMsg = statusFilter === 'joined'
-      ? 'No accepted groups yet. Submit join requests and click "Check & Sync Approvals" once admins accept!'
+      ? 'No accepted groups yet. Click "📥 Import My Joined Groups" to sync groups you already belong to, or add one with "➕ Add Group by Link"!'
       : statusFilter === 'join_requested'
       ? 'No pending join requests currently waiting for approval.'
-      : 'No groups found. Select a niche and click "Search FB Groups" to discover relevant groups!';
+      : 'No groups found. Select a niche and click "Search FB Groups" or import your existing groups!';
     container.innerHTML = `<tr><td colspan="6" class="text-center text-xs text-base-content/50 py-8">${emptyMsg}</td></tr>`;
     return;
   }
@@ -468,18 +468,21 @@ function renderGroups() {
           <span class="text-xs text-base-content/50 font-mono">${escapeHtml(g.groupIdentifier || '')}</span>
         </td>
         <td><span class="badge badge-sm badge-ghost">${escapeHtml(g.nicheName || 'General')}</span></td>
-        <td class="text-xs font-medium">${escapeHtml(g.members || 'Unknown')}</td>
+        <td class="text-xs font-medium">${escapeHtml(g.members || 'Member')}</td>
         <td class="text-xs text-base-content/70">${escapeHtml(g.privacy || 'Public')}</td>
         <td>${statusBadge}</td>
         <td>
-          <div class="flex gap-1.5">
-            ${g.status !== 'joined' ? `
-              <button class="btn btn-success btn-xs" onclick="joinGroupClick('${g.id}')">🚀 Auto-Join</button>
-              <button class="btn btn-ghost btn-xs text-success" title="Mark as Joined if accepted" onclick="toggleGroupJoined('${g.id}', 'joined')">Mark Accepted</button>
-            ` : `
+          <div class="flex items-center gap-1.5 flex-wrap">
+            ${g.status === 'joined' ? `
               <button class="btn btn-primary btn-xs" onclick="openPostModalForGroup('${g.id}')">✍️ Post Now</button>
+              <button class="btn btn-ghost btn-xs text-info" title="Verify Membership Live on Facebook" onclick="verifyGroupClick('${g.id}')">🔍 Verify</button>
+              <button class="btn btn-ghost btn-xs text-base-content/50" title="Set back to Discovered" onclick="toggleGroupJoined('${g.id}', 'discovered')">Unmark</button>
+            ` : `
+              <button class="btn btn-success btn-xs" onclick="joinGroupClick('${g.id}')">🚀 Auto-Join</button>
+              <button class="btn btn-outline btn-success btn-xs" title="Mark as Joined if you are already accepted" onclick="toggleGroupJoined('${g.id}', 'joined')">✅ Mark Joined</button>
+              <button class="btn btn-ghost btn-xs text-info" title="Check Membership Live on Facebook" onclick="verifyGroupClick('${g.id}')">🔍 Live Check</button>
             `}
-            <button class="btn btn-ghost btn-xs text-error" onclick="deleteGroupClick('${g.id}')">🗑️</button>
+            <button class="btn btn-ghost btn-xs text-error" title="Delete group" onclick="deleteGroupClick('${g.id}')">🗑️</button>
           </div>
         </td>
       </tr>
@@ -487,16 +490,80 @@ function renderGroups() {
   }).join('');
 }
 
+async function triggerImportMyGroups() {
+  const btn = document.getElementById('btn-import-my-groups');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '⏳ Scanning Facebook Groups...';
+  }
+  showToast('Connecting to Facebook to import all groups you have joined...', 'info');
+
+  try {
+    const res = await API.importMyGroups();
+    if (res.success) {
+      state.groups = await API.getGroups();
+      renderGroups();
+      loadOverviewStats();
+      showToast(`🎉 Imported ${res.importedCount} new groups! Total joined: ${res.totalJoinedCount}`, 'success');
+    } else {
+      showToast(res.error || 'Failed to import joined groups', 'error');
+    }
+    refreshLogs();
+  } catch (err) {
+    showToast('Import error: ' + err.message, 'error');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '📥 Import My Joined Groups';
+    }
+  }
+}
+
+function openAddGroupModal() {
+  populateNicheSelectDropdowns();
+  const modal = document.getElementById('add-group-modal');
+  if (modal) {
+    document.getElementById('add-group-url').value = '';
+    document.getElementById('add-group-name').value = '';
+    document.getElementById('add-group-status-select').value = 'joined';
+    modal.classList.add('active');
+  }
+}
+
+async function verifyGroupClick(groupId) {
+  showToast('Visiting Facebook group to verify live membership status...', 'info');
+  try {
+    const res = await API.verifyGroup(groupId);
+    if (res.success) {
+      state.groups = await API.getGroups();
+      renderGroups();
+      loadOverviewStats();
+      if (res.isJoined) {
+        showToast('🎉 Confirmed! You are an active member with posting access.', 'success');
+      } else if (res.status === 'join_requested') {
+        showToast('⏳ Group join request is currently pending admin approval.', 'warn');
+      } else {
+        showToast('ℹ️ Live check: Not a member yet (status: Discovered).', 'info');
+      }
+    } else {
+      showToast(res.error || 'Verification failed', 'error');
+    }
+    refreshLogs();
+  } catch (err) {
+    showToast('Verification error: ' + err.message, 'error');
+  }
+}
+
 async function triggerSyncGroupStatuses() {
   const btn = document.getElementById('btn-sync-group-statuses');
   if (btn) {
     btn.disabled = true;
-    btn.innerText = '⏳ Checking Approvals...';
+    btn.innerText = '⏳ Verifying Approvals...';
   }
   showToast('Checking pending group URLs to detect admin acceptances...', 'info');
 
   try {
-    const res = await API.syncGroupStatuses();
+    const res = await API.syncGroupStatuses(false);
     if (res.success) {
       state.groups = await API.getGroups();
       renderGroups();
@@ -515,7 +582,7 @@ async function triggerSyncGroupStatuses() {
   } finally {
     if (btn) {
       btn.disabled = false;
-      btn.innerText = '🔄 Check & Sync Approvals';
+      btn.innerText = '🔄 Verify Approvals';
     }
   }
 }
@@ -580,12 +647,14 @@ async function joinGroupClick(groupId) {
 
 async function toggleGroupJoined(groupId, status) {
   try {
-    await API.updateGroupStatus(groupId, status, true);
+    const isJoined = status === 'joined';
+    await API.updateGroupStatus(groupId, status, isJoined);
     state.groups = await API.getGroups();
     renderGroups();
-    showToast('Group status updated', 'success');
+    loadOverviewStats();
+    showToast(`Group status updated to ${isJoined ? 'Joined (Member)' : status}`, 'success');
   } catch (e) {
-    showToast('Failed to update status', 'error');
+    showToast('Failed to update status: ' + e.message, 'error');
   }
 }
 
@@ -1002,6 +1071,49 @@ function initForms() {
         document.getElementById('niche-modal').classList.remove('active');
       } catch (err) {
         showToast('Failed to save niche: ' + err.message, 'error');
+      }
+    });
+  }
+
+  // Add Group by URL Modal Submit
+  const addGroupForm = document.getElementById('add-group-form');
+  if (addGroupForm) {
+    addGroupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const url = document.getElementById('add-group-url').value.trim();
+      const name = document.getElementById('add-group-name').value.trim();
+      const nicheId = document.getElementById('add-group-niche-select').value;
+      const status = document.getElementById('add-group-status-select').value;
+      const submitBtn = document.getElementById('btn-submit-add-group');
+
+      if (!url) {
+        showToast('Please enter a Facebook group URL', 'error');
+        return;
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Saving...';
+      }
+
+      try {
+        const res = await API.addGroupByUrl({ url, name, nicheId, status });
+        if (res.success) {
+          showToast(`Group "${res.group.name}" added successfully!`, 'success');
+          state.groups = await API.getGroups();
+          renderGroups();
+          loadOverviewStats();
+          document.getElementById('add-group-modal').classList.remove('active');
+        } else {
+          showToast(res.error || 'Failed to add group', 'error');
+        }
+      } catch (err) {
+        showToast('Error: ' + err.message, 'error');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerText = 'Save Group';
+        }
       }
     });
   }

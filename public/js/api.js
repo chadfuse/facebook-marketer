@@ -90,12 +90,23 @@ const API = {
     method: 'POST',
     body: JSON.stringify({ nicheId })
   }),
+  importMyGroups: () => authFetch('/api/groups/import-my-groups', {
+    method: 'POST'
+  }),
+  addGroupByUrl: (payload) => authFetch('/api/groups/add-by-url', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  }),
+  verifyGroup: (groupId) => authFetch(`/api/groups/${groupId}/verify`, {
+    method: 'POST'
+  }),
   joinGroup: (groupId) => authFetch('/api/groups/join', {
     method: 'POST',
     body: JSON.stringify({ groupId })
   }),
-  syncGroupStatuses: () => authFetch('/api/groups/sync-status', {
-    method: 'POST'
+  syncGroupStatuses: (includeDiscovered = false) => authFetch('/api/groups/sync-status', {
+    method: 'POST',
+    body: JSON.stringify({ includeDiscovered })
   }),
   updateGroupStatus: (groupId, status, canPost) => authFetch(`/api/groups/${groupId}/status`, {
     method: 'PATCH',

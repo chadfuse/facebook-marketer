@@ -33,6 +33,27 @@ async function runVerification() {
     console.log(`✅ [${framework.name}] Generated ${posts[0].length} chars of copy.`);
   }
 
+  // Test 3: Add Group by URL & Membership Status
+  console.log('\nTest 3: Testing Direct Facebook Group URL Integration...');
+  const { addGroupByDirectUrl, updateGroupStatus } = require('../services/fb-groups');
+  const addedGroup = addGroupByDirectUrl({
+    url: 'https://www.facebook.com/groups/architecture.jobs.philippines/',
+    nicheId: sampleNiche.id,
+    customName: 'Architecture Jobs Philippines',
+    status: 'joined'
+  });
+
+  if (!addedGroup || addedGroup.status !== 'joined' || !addedGroup.canPost) {
+    throw new Error('Failed to add group directly as joined member');
+  }
+  console.log(`✅ Successfully added group "${addedGroup.name}" as [${addedGroup.status}] (canPost=${addedGroup.canPost}).`);
+
+  const updated = updateGroupStatus(addedGroup.id, { status: 'joined' });
+  if (updated.status !== 'joined' || !updated.canPost) {
+    throw new Error('Failed to update group status');
+  }
+  console.log(`✅ Successfully updated group membership status to [${updated.status}].`);
+
   console.log('\n🎉 All core services passed verification successfully!\n');
 }
 

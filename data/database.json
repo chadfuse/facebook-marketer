@@ -31,10 +31,62 @@
       "updatedAt": "2026-09-15T15:26:13.054Z"
     }
   ],
-  "groups": [],
+  "groups": [
+    {
+      "id": "grp-85624c0f",
+      "nicheId": "niche-hvac-ny",
+      "nicheName": "HVAC Company New York",
+      "name": "Architecture Jobs Philippines",
+      "url": "https://www.facebook.com/groups/architecture.jobs.philippines/",
+      "groupIdentifier": "architecture.jobs.philippines",
+      "members": "Member",
+      "privacy": "Public",
+      "status": "joined",
+      "canPost": true,
+      "createdAt": "2026-09-16T16:36:30.420Z",
+      "updatedAt": "2026-09-16T16:36:30.421Z",
+      "lastPostDate": null,
+      "postCount": 0
+    }
+  ],
   "postQueue": [],
   "postHistory": [],
   "logs": [
+    {
+      "id": "log-1789576590420-dzy6x",
+      "timestamp": "2026-09-16T16:36:30.420Z",
+      "type": "success",
+      "message": "Added group \"Architecture Jobs Philippines\" (https://www.facebook.com/groups/architecture.jobs.philippines/) as joined.",
+      "details": {}
+    },
+    {
+      "id": "log-1789576589989-y4gjl",
+      "timestamp": "2026-09-16T16:36:29.989Z",
+      "type": "warn",
+      "message": "Gemini API Key not set. Generating high-converting template fallback.",
+      "details": {}
+    },
+    {
+      "id": "log-1789576589988-cco3a",
+      "timestamp": "2026-09-16T16:36:29.988Z",
+      "type": "warn",
+      "message": "Gemini API Key not set. Generating high-converting template fallback.",
+      "details": {}
+    },
+    {
+      "id": "log-1789576589988-0akd8",
+      "timestamp": "2026-09-16T16:36:29.988Z",
+      "type": "warn",
+      "message": "Gemini API Key not set. Generating high-converting template fallback.",
+      "details": {}
+    },
+    {
+      "id": "log-1789576589986-s2d1v",
+      "timestamp": "2026-09-16T16:36:29.987Z",
+      "type": "warn",
+      "message": "Gemini API Key not set. Generating high-converting template fallback.",
+      "details": {}
+    },
     {
       "id": "log-1789574678648-gkwpl",
       "timestamp": "2026-09-16T16:04:38.648Z",

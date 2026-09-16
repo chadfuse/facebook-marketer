@@ -53,6 +53,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ----------------------------------------------------
+// 💓 HEALTH / KEEP-ALIVE ENDPOINT (For 24/7 Uptime Pings)
+// ----------------------------------------------------
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// ----------------------------------------------------
 // 🔐 ADMIN DASHBOARD AUTHENTICATION
 // ----------------------------------------------------
 app.post('/api/auth/admin-login', (req, res) => {

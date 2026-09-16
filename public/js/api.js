@@ -112,6 +112,10 @@ const API = {
     method: 'PATCH',
     body: JSON.stringify({ status, canPost })
   }),
+  batchUpdateGroupStatus: (groupIds, status) => authFetch('/api/groups/batch-status', {
+    method: 'POST',
+    body: JSON.stringify({ groupIds, status })
+  }),
   deleteGroup: (groupId) => authFetch(`/api/groups/${groupId}`, { method: 'DELETE' }),
 
   // AI Generation

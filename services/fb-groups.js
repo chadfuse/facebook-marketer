@@ -618,11 +618,34 @@ function updateGroupStatus(groupId, updates) {
   Object.assign(group, updates, { updatedAt: new Date().toISOString() });
   if (updates.status === 'joined') {
     group.canPost = true;
-  } else if (updates.status === 'discovered' || updates.status === 'join_requested') {
+  } else {
     group.canPost = false;
   }
   saveDatabase(db);
   return group;
+}
+
+function updateMultipleGroupStatuses(groupIds, status) {
+  if (!Array.isArray(groupIds) || groupIds.length === 0) {
+    throw new Error('groupIds array is required');
+  }
+  const db = getDatabase();
+  const currentGroups = db.groups || [];
+  let updatedCount = 0;
+  const isJoined = status === 'joined';
+
+  for (const group of currentGroups) {
+    if (groupIds.includes(group.id)) {
+      group.status = status;
+      group.canPost = isJoined;
+      group.updatedAt = new Date().toISOString();
+      updatedCount++;
+    }
+  }
+
+  saveDatabase(db);
+  logEvent('info', `Batch updated ${updatedCount} groups to status "${status}".`);
+  return { updatedCount, success: true };
 }
 
 module.exports = {
@@ -632,6 +655,7 @@ module.exports = {
   addGroupByDirectUrl,
   joinGroup,
   checkMembershipStatuses,
-  updateGroupStatus
+  updateGroupStatus,
+  updateMultipleGroupStatuses
 };
 

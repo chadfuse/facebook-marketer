@@ -299,6 +299,9 @@
                 <button class="btn btn-xs btn-ghost text-info group-tab-btn" data-status="discovered" onclick="setGroupStatusFilter('discovered')">
                   🔍 Discovered (<span id="tab-count-discovered">0</span>)
                 </button>
+                <button class="btn btn-xs btn-ghost text-error group-tab-btn" data-status="rejected" onclick="setGroupStatusFilter('rejected')">
+                  ❌ Ineligible / Rejected (<span id="tab-count-rejected">0</span>)
+                </button>
               </div>
 
               <div class="flex items-center gap-2">
@@ -308,10 +311,29 @@
               </div>
             </div>
 
+            <!-- Batch Action Toolbar (Visible when rows are selected) -->
+            <div id="groups-batch-bar" class="hidden bg-primary/10 border border-primary/30 rounded-lg px-4 py-2.5 mb-4 flex flex-wrap items-center justify-between gap-3 animate-fadeIn">
+              <div class="flex items-center gap-2 text-xs font-semibold text-primary">
+                <span>Selected: <span id="batch-selected-count">0</span> group(s)</span>
+              </div>
+              <div class="flex flex-wrap items-center gap-1.5">
+                <span class="text-xs text-base-content/70 mr-1">Set Status:</span>
+                <button class="btn btn-success btn-xs" onclick="applyBatchStatus('joined')">✅ Joined</button>
+                <button class="btn btn-warning btn-xs" onclick="applyBatchStatus('join_requested')">⏳ Pending</button>
+                <button class="btn btn-info btn-xs" onclick="applyBatchStatus('discovered')">🔍 Discovered</button>
+                <button class="btn btn-error btn-xs btn-outline" onclick="applyBatchStatus('rejected')">❌ Ineligible</button>
+                <div class="divider divider-horizontal my-0"></div>
+                <button class="btn btn-ghost btn-xs text-error" onclick="deleteBatchSelectedGroups()">🗑️ Delete</button>
+              </div>
+            </div>
+
             <div class="overflow-x-auto">
               <table class="table table-zebra w-full">
                 <thead>
                   <tr class="text-xs text-base-content/60 border-b border-base-300">
+                    <th class="w-10">
+                      <input type="checkbox" id="select-all-groups" class="checkbox checkbox-xs checkbox-primary" onchange="toggleSelectAllGroups(this.checked)" title="Select All" />
+                    </th>
                     <th>Group Name</th>
                     <th>Niche</th>
                     <th>Members</th>

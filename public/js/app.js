@@ -13,7 +13,8 @@ const state = {
   auth: { isLoggedIn: false },
   editingNicheId: null,
   isSearchingGroups: false,
-  isGeneratingAi: false
+  isGeneratingAi: false,
+  selectedGroupIds: new Set()
 };
 
 // Admin Auth Handlers
@@ -399,7 +400,7 @@ function setGroupStatusFilter(status) {
       btn.className = 'btn btn-xs btn-active group-tab-btn';
     } else {
       const s = btn.getAttribute('data-status');
-      const textClass = s === 'joined' ? 'text-success' : s === 'join_requested' ? 'text-warning' : s === 'discovered' ? 'text-info' : '';
+      const textClass = s === 'joined' ? 'text-success' : s === 'join_requested' ? 'text-warning' : s === 'discovered' ? 'text-info' : s === 'rejected' ? 'text-error' : '';
       btn.className = `btn btn-xs btn-ghost ${textClass} group-tab-btn`;
     }
   });
@@ -413,53 +414,166 @@ function updateGroupTabCounts() {
   const joinedCount = groups.filter(g => g.status === 'joined').length;
   const pendingCount = groups.filter(g => g.status === 'join_requested').length;
   const discoveredCount = groups.filter(g => g.status === 'discovered').length;
+  const rejectedCount = groups.filter(g => g.status === 'rejected').length;
 
   const elAll = document.getElementById('tab-count-all');
   const elJoined = document.getElementById('tab-count-joined');
   const elPending = document.getElementById('tab-count-pending');
   const elDiscovered = document.getElementById('tab-count-discovered');
+  const elRejected = document.getElementById('tab-count-rejected');
 
   if (elAll) elAll.innerText = allCount;
   if (elJoined) elJoined.innerText = joinedCount;
   if (elPending) elPending.innerText = pendingCount;
   if (elDiscovered) elDiscovered.innerText = discoveredCount;
+  if (elRejected) elRejected.innerText = rejectedCount;
+}
+
+function updateBatchBar() {
+  const bar = document.getElementById('groups-batch-bar');
+  const countSpan = document.getElementById('batch-selected-count');
+  const selectAll = document.getElementById('select-all-groups');
+
+  const count = state.selectedGroupIds.size;
+  if (countSpan) countSpan.innerText = count;
+
+  if (bar) {
+    if (count > 0) {
+      bar.classList.remove('hidden');
+    } else {
+      bar.classList.add('hidden');
+    }
+  }
+
+  if (selectAll) {
+    const visibleGroups = getFilteredGroups();
+    selectAll.checked = visibleGroups.length > 0 && visibleGroups.every(g => state.selectedGroupIds.has(g.id));
+  }
+}
+
+function getFilteredGroups() {
+  const nicheFilter = document.getElementById('group-filter-niche')?.value || '';
+  const statusFilter = currentGroupStatusFilter;
+  let filtered = state.groups || [];
+  if (nicheFilter) filtered = filtered.filter(g => g.nicheId === nicheFilter);
+  if (statusFilter) filtered = filtered.filter(g => g.status === statusFilter);
+  return filtered;
+}
+
+function toggleSelectAllGroups(checked) {
+  const visible = getFilteredGroups();
+  visible.forEach(g => {
+    if (checked) {
+      state.selectedGroupIds.add(g.id);
+    } else {
+      state.selectedGroupIds.delete(g.id);
+    }
+  });
+  renderGroups();
+}
+
+function toggleGroupSelect(groupId, checked) {
+  if (checked) {
+    state.selectedGroupIds.add(groupId);
+  } else {
+    state.selectedGroupIds.delete(groupId);
+  }
+  updateBatchBar();
+}
+
+async function applyBatchStatus(status) {
+  const ids = Array.from(state.selectedGroupIds);
+  if (ids.length === 0) return;
+
+  showToast(`Updating ${ids.length} group(s) to "${status}"...`, 'info');
+  try {
+    const res = await API.batchUpdateGroupStatus(ids, status);
+    if (res.success) {
+      state.groups = await API.getGroups();
+      state.selectedGroupIds.clear();
+      renderGroups();
+      loadOverviewStats();
+      showToast(`Updated ${res.updatedCount} groups to ${status}!`, 'success');
+    }
+  } catch (err) {
+    showToast('Batch update error: ' + err.message, 'error');
+  }
+}
+
+async function deleteBatchSelectedGroups() {
+  const ids = Array.from(state.selectedGroupIds);
+  if (ids.length === 0) return;
+  if (!confirm(`Permanently remove ${ids.length} selected group(s)?`)) return;
+
+  showToast(`Removing ${ids.length} groups...`, 'info');
+  try {
+    for (const id of ids) {
+      await API.deleteGroup(id).catch(() => {});
+    }
+    state.selectedGroupIds.clear();
+    state.groups = await API.getGroups();
+    renderGroups();
+    loadOverviewStats();
+    showToast(`Removed ${ids.length} groups`, 'success');
+  } catch (err) {
+    showToast('Delete error: ' + err.message, 'error');
+  }
+}
+
+async function changeGroupStatusDropdown(groupId, newStatus) {
+  try {
+    const isJoined = newStatus === 'joined';
+    await API.updateGroupStatus(groupId, newStatus, isJoined);
+    state.groups = await API.getGroups();
+    renderGroups();
+    loadOverviewStats();
+    showToast(`Group status set to ${newStatus === 'joined' ? '✅ Joined (Member)' : newStatus}`, 'success');
+  } catch (err) {
+    showToast('Failed to update status: ' + err.message, 'error');
+  }
 }
 
 function renderGroups() {
   const container = document.getElementById('groups-table-body');
-  const nicheFilter = document.getElementById('group-filter-niche')?.value || '';
-  const statusFilter = currentGroupStatusFilter;
   if (!container) return;
 
   updateGroupTabCounts();
+  updateBatchBar();
 
-  let filtered = state.groups || [];
-  if (nicheFilter) filtered = filtered.filter(g => g.nicheId === nicheFilter);
-  if (statusFilter) filtered = filtered.filter(g => g.status === statusFilter);
+  const filtered = getFilteredGroups();
 
   if (filtered.length === 0) {
-    const emptyMsg = statusFilter === 'joined'
+    const emptyMsg = currentGroupStatusFilter === 'joined'
       ? 'No accepted groups yet. Click "📥 Import My Joined Groups" to sync groups you already belong to, or add one with "➕ Add Group by Link"!'
-      : statusFilter === 'join_requested'
+      : currentGroupStatusFilter === 'join_requested'
       ? 'No pending join requests currently waiting for approval.'
+      : currentGroupStatusFilter === 'rejected'
+      ? 'No rejected or ineligible groups.'
       : 'No groups found. Select a niche and click "Search FB Groups" or import your existing groups!';
-    container.innerHTML = `<tr><td colspan="6" class="text-center text-xs text-base-content/50 py-8">${emptyMsg}</td></tr>`;
+    container.innerHTML = `<tr><td colspan="7" class="text-center text-xs text-base-content/50 py-8">${emptyMsg}</td></tr>`;
     return;
   }
 
   container.innerHTML = filtered.map(g => {
-    let statusBadge = `<span class="badge badge-sm badge-outline badge-info">Discovered</span>`;
     let rowHighlightClass = '';
+    let selectStatusColor = 'select-info';
 
     if (g.status === 'joined') {
-      statusBadge = `<span class="badge badge-sm badge-success font-semibold">✅ Accepted & Member</span>`;
       rowHighlightClass = 'bg-success/5 hover:bg-success/10 transition-colors';
+      selectStatusColor = 'select-success text-success';
     } else if (g.status === 'join_requested') {
-      statusBadge = `<span class="badge badge-sm badge-warning font-semibold">⏳ Pending Approval</span>`;
+      selectStatusColor = 'select-warning text-warning';
+    } else if (g.status === 'rejected') {
+      selectStatusColor = 'select-error text-error';
     }
+
+    const isChecked = state.selectedGroupIds.has(g.id);
 
     return `
       <tr class="${rowHighlightClass}">
+        <td>
+          <input type="checkbox" class="checkbox checkbox-xs checkbox-primary group-row-checkbox" ${isChecked ? 'checked' : ''} onchange="toggleGroupSelect('${g.id}', this.checked)" />
+        </td>
         <td>
           <a href="${escapeHtml(g.url)}" target="_blank" class="font-bold text-sm text-white hover:text-primary transition-colors flex items-center gap-1.5">
             ${escapeHtml(g.name)}
@@ -470,18 +584,22 @@ function renderGroups() {
         <td><span class="badge badge-sm badge-ghost">${escapeHtml(g.nicheName || 'General')}</span></td>
         <td class="text-xs font-medium">${escapeHtml(g.members || 'Member')}</td>
         <td class="text-xs text-base-content/70">${escapeHtml(g.privacy || 'Public')}</td>
-        <td>${statusBadge}</td>
+        <td>
+          <select class="select select-bordered select-xs font-semibold ${selectStatusColor} w-full max-w-[170px]" onchange="changeGroupStatusDropdown('${g.id}', this.value)">
+            <option value="joined" ${g.status === 'joined' ? 'selected' : ''}>✅ Joined (Member)</option>
+            <option value="join_requested" ${g.status === 'join_requested' ? 'selected' : ''}>⏳ Pending Approval</option>
+            <option value="discovered" ${g.status === 'discovered' ? 'selected' : ''}>🔍 Discovered</option>
+            <option value="rejected" ${g.status === 'rejected' ? 'selected' : ''}>❌ Ineligible / Rejected</option>
+          </select>
+        </td>
         <td>
           <div class="flex items-center gap-1.5 flex-wrap">
             ${g.status === 'joined' ? `
               <button class="btn btn-primary btn-xs" onclick="openPostModalForGroup('${g.id}')">✍️ Post Now</button>
-              <button class="btn btn-ghost btn-xs text-info" title="Verify Membership Live on Facebook" onclick="verifyGroupClick('${g.id}')">🔍 Verify</button>
-              <button class="btn btn-ghost btn-xs text-base-content/50" title="Set back to Discovered" onclick="toggleGroupJoined('${g.id}', 'discovered')">Unmark</button>
             ` : `
               <button class="btn btn-success btn-xs" onclick="joinGroupClick('${g.id}')">🚀 Auto-Join</button>
-              <button class="btn btn-outline btn-success btn-xs" title="Mark as Joined if you are already accepted" onclick="toggleGroupJoined('${g.id}', 'joined')">✅ Mark Joined</button>
-              <button class="btn btn-ghost btn-xs text-info" title="Check Membership Live on Facebook" onclick="verifyGroupClick('${g.id}')">🔍 Live Check</button>
             `}
+            <button class="btn btn-ghost btn-xs text-info" title="Verify Membership Live on Facebook" onclick="verifyGroupClick('${g.id}')">🔍 Check</button>
             <button class="btn btn-ghost btn-xs text-error" title="Delete group" onclick="deleteGroupClick('${g.id}')">🗑️</button>
           </div>
         </td>

@@ -32,7 +32,8 @@ const {
   addGroupByDirectUrl,
   joinGroup,
   checkMembershipStatuses,
-  updateGroupStatus
+  updateGroupStatus,
+  updateMultipleGroupStatuses
 } = require('./services/fb-groups');
 
 const {
@@ -298,6 +299,20 @@ app.post('/api/groups/sync-status', async (req, res) => {
     res.json(result);
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/groups/batch-status', (req, res) => {
+  const { groupIds, status } = req.body;
+  if (!groupIds || !Array.isArray(groupIds) || !status) {
+    return res.status(400).json({ error: 'groupIds array and status are required' });
+  }
+
+  try {
+    const result = updateMultipleGroupStatuses(groupIds, status);
+    res.json(result);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
 });
 

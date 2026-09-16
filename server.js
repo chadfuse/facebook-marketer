@@ -577,6 +577,16 @@ cron.schedule('*/30 * * * *', async () => {
   }
 });
 
+// 3. Automatically verifies and updates Facebook group membership statuses every 20 minutes
+cron.schedule('*/20 * * * *', async () => {
+  console.log('[CRON] Auto-checking group membership statuses...');
+  try {
+    await checkMembershipStatuses({ includeDiscovered: true });
+  } catch (err) {
+    console.error('[CRON] Error auto-checking membership statuses:', err.message);
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`=======================================================`);
   console.log(`🚀 Facebook Group Marketer & AI Auto-Poster`);

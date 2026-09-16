@@ -1,5 +1,5 @@
 const { getDatabase, saveDatabase, getConfig, saveConfig, logEvent } = require('./storage');
-const { searchGroupsForNiche, joinGroup } = require('./fb-groups');
+const { searchGroupsForNiche, joinGroup, checkMembershipStatuses } = require('./fb-groups');
 const { generatePostContent, FRAMEWORKS } = require('./gemini');
 const { v4: uuidv4 } = require('uuid');
 
@@ -27,10 +27,25 @@ async function runAutopilotCycle() {
   const results = {
     discoveredCount: 0,
     joinedCount: 0,
-    generatedPostsCount: 0
+    generatedPostsCount: 0,
+    autoUpdatedCount: 0
   };
 
   try {
+    // ----------------------------------------------------
+    // 0. AUTO-STATUS SYNC: Auto-detect joined / newly accepted groups
+    // ----------------------------------------------------
+    try {
+      logEvent('info', '[AUTOPILOT] Automatically checking live membership statuses for unjoined groups...');
+      const syncRes = await checkMembershipStatuses({ includeDiscovered: true });
+      if (syncRes && syncRes.newlyAcceptedCount > 0) {
+        results.autoUpdatedCount = syncRes.newlyAcceptedCount;
+        logEvent('success', `[AUTOPILOT] 🎉 Automatically updated ${syncRes.newlyAcceptedCount} group(s) to Joined (Member)!`);
+      }
+    } catch (syncErr) {
+      logEvent('warn', `[AUTOPILOT] Auto-sync membership status notice: ${syncErr.message}`);
+    }
+
     const niches = db.niches || [];
     const groups = db.groups || [];
     const dailyJoinLimit = config.autopilotDailyJoinLimit || config.dailyJoinLimit || 3;

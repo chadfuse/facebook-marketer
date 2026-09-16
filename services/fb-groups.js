@@ -581,16 +581,53 @@ async function checkMembershipStatuses(options = {}) {
           await page.goto(group.url, { waitUntil: 'domcontentloaded', timeout: 25000 });
           await page.waitForTimeout(2000);
 
-          const pageText = await page.evaluate(() => document.body ? document.body.innerText : '');
-          const hasComposer = await page.$('div[role="button"]:has-text("Write something..."), span:has-text("Write something..."), div[role="button"]:has-text("Create a public post")');
+          const pageAnalysis = await page.evaluate(() => {
+            const bodyText = document.body ? document.body.innerText : '';
+            const titleEl = document.querySelector('h1, h2');
+            const title = titleEl ? titleEl.innerText.trim() : '';
 
-          if (hasComposer || pageText.includes('Joined') || pageText.includes('Write something...') || pageText.includes('Manage')) {
+            // Check for composer / posting input
+            const hasComposer = Boolean(
+              document.querySelector('div[role="button"][aria-label*="Write something"], div[role="button"][aria-label*="Create a public post"], div[aria-label*="Create a post"]') ||
+              bodyText.includes('Write something...') ||
+              bodyText.includes('Create a public post') ||
+              bodyText.includes("What's on your mind?")
+            );
+
+            // Check for Joined/Manage badges
+            const ariaLabels = Array.from(document.querySelectorAll('[aria-label]')).map(el => el.getAttribute('aria-label').toLowerCase());
+            const hasJoinedBadge = ariaLabels.some(a => a.includes('joined') || a.includes('manage') || a.includes('member')) ||
+              bodyText.includes('Joined') || bodyText.includes('Manage') || bodyText.includes('You are a member');
+
+            // Check for group navigation tabs (Discussion, Featured, Members, Events, Media)
+            const hasTabs = Boolean(document.querySelector('a[role="tab"], div[role="tablist"]'));
+
+            const isPending = bodyText.includes('Pending') || bodyText.includes('Cancel request') || ariaLabels.some(a => a.includes('pending') || a.includes('cancel request'));
+            const hasJoinButton = bodyText.includes('Join group') || bodyText.includes('Join Group') || ariaLabels.some(a => a.includes('join group'));
+
+            let isMember = false;
+            if (hasComposer || hasJoinedBadge) {
+              isMember = true;
+            } else if (!hasJoinButton && hasTabs && !isPending) {
+              isMember = true;
+            }
+
+            return { isMember, isPending, title: title.split('\n')[0].trim() };
+          });
+
+          if (pageAnalysis.isMember) {
             group.status = 'joined';
             group.canPost = true;
+            if (pageAnalysis.title && pageAnalysis.title.length > 2 && !pageAnalysis.title.includes('Facebook')) {
+              group.name = pageAnalysis.title;
+            }
             group.updatedAt = new Date().toISOString();
             newlyAcceptedCount++;
             logEvent('success', `🎉 Confirmed membership for "${group.name}"! Status updated to Joined.`);
-          } else if (pageText.includes('Join group') || pageText.includes('Join Group')) {
+          } else if (pageAnalysis.isPending) {
+            group.status = 'join_requested';
+            group.updatedAt = new Date().toISOString();
+          } else {
             group.status = 'discovered';
             group.updatedAt = new Date().toISOString();
           }

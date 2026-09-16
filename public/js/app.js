@@ -672,27 +672,27 @@ async function verifyGroupClick(groupId) {
   }
 }
 
-async function triggerSyncGroupStatuses() {
+async function triggerSyncGroupStatuses(includeDiscovered = true) {
   const btn = document.getElementById('btn-sync-group-statuses');
   if (btn) {
     btn.disabled = true;
-    btn.innerText = '⏳ Verifying Approvals...';
+    btn.innerText = '⏳ Auto-Detecting Statuses...';
   }
-  showToast('Checking pending group URLs to detect admin acceptances...', 'info');
+  showToast('Visiting group URLs on Facebook to auto-detect your live membership status...', 'info');
 
   try {
-    const res = await API.syncGroupStatuses(false);
+    const res = await API.syncGroupStatuses(includeDiscovered);
     if (res.success) {
       state.groups = await API.getGroups();
       renderGroups();
       loadOverviewStats();
       if (res.newlyAcceptedCount > 0) {
-        showToast(`🎉 Found ${res.newlyAcceptedCount} newly accepted group(s)! Status updated to Member.`, 'success');
+        showToast(`🎉 Auto-detected ${res.newlyAcceptedCount} group(s) as Joined (Member)! Statuses updated.`, 'success');
       } else {
-        showToast(`Checked ${res.checkedCount} pending groups. No new approvals detected yet.`, 'info');
+        showToast(`Checked ${res.checkedCount} groups on Facebook.`, 'info');
       }
     } else {
-      showToast(res.message || 'No pending groups to check', 'info');
+      showToast(res.message || 'No groups to check', 'info');
     }
     refreshLogs();
   } catch (err) {
@@ -700,7 +700,7 @@ async function triggerSyncGroupStatuses() {
   } finally {
     if (btn) {
       btn.disabled = false;
-      btn.innerText = '🔄 Verify Approvals';
+      btn.innerText = '⚡ Auto-Detect & Sync Statuses';
     }
   }
 }

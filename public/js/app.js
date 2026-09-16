@@ -14,7 +14,9 @@ const state = {
   editingNicheId: null,
   isSearchingGroups: false,
   isGeneratingAi: false,
-  selectedGroupIds: new Set()
+  selectedGroupIds: new Set(),
+  groupsPage: 1,
+  groupsPerPage: 10
 };
 
 // Admin Auth Handlers
@@ -393,6 +395,7 @@ let currentGroupStatusFilter = '';
 
 function setGroupStatusFilter(status) {
   currentGroupStatusFilter = status;
+  state.groupsPage = 1;
   
   // Update tab active classes
   document.querySelectorAll('.group-tab-btn').forEach(btn => {
@@ -533,6 +536,17 @@ async function changeGroupStatusDropdown(groupId, newStatus) {
   }
 }
 
+function changeGroupsPage(newPage) {
+  state.groupsPage = newPage;
+  renderGroups();
+}
+
+function changeGroupsPerPage(newPerPage) {
+  state.groupsPerPage = newPerPage === 'all' ? 'all' : parseInt(newPerPage) || 10;
+  state.groupsPage = 1;
+  renderGroups();
+}
+
 function renderGroups() {
   const container = document.getElementById('groups-table-body');
   if (!container) return;
@@ -541,8 +555,64 @@ function renderGroups() {
   updateBatchBar();
 
   const filtered = getFilteredGroups();
+  const totalCount = filtered.length;
 
-  if (filtered.length === 0) {
+  // Calculate pagination
+  let perPage = state.groupsPerPage === 'all' ? totalCount : (parseInt(state.groupsPerPage) || 10);
+  if (perPage <= 0) perPage = 10;
+  const totalPages = state.groupsPerPage === 'all' ? 1 : (Math.ceil(totalCount / perPage) || 1);
+
+  if (state.groupsPage > totalPages) state.groupsPage = totalPages;
+  if (state.groupsPage < 1) state.groupsPage = 1;
+
+  const startIndex = state.groupsPerPage === 'all' ? 0 : (state.groupsPage - 1) * perPage;
+  const endIndex = state.groupsPerPage === 'all' ? totalCount : Math.min(startIndex + perPage, totalCount);
+  const pagedGroups = state.groupsPerPage === 'all' ? filtered : filtered.slice(startIndex, endIndex);
+
+  // Update Pagination Info
+  const pageInfoEl = document.getElementById('groups-page-info');
+  if (pageInfoEl) {
+    pageInfoEl.innerText = totalCount === 0
+      ? 'Showing 0–0 of 0 groups'
+      : `Showing ${startIndex + 1}–${endIndex} of ${totalCount} groups`;
+  }
+
+  // Render Pagination Buttons
+  const paginationContainer = document.getElementById('groups-pagination-buttons');
+  if (paginationContainer) {
+    if (totalPages <= 1) {
+      paginationContainer.innerHTML = `
+        <button class="join-item btn btn-xs btn-disabled">Page 1 of 1</button>
+      `;
+    } else {
+      let buttonsHtml = '';
+      // First and Previous buttons
+      buttonsHtml += `
+        <button class="join-item btn btn-xs ${state.groupsPage === 1 ? 'btn-disabled' : ''}" onclick="changeGroupsPage(1)" title="First Page">«</button>
+        <button class="join-item btn btn-xs ${state.groupsPage === 1 ? 'btn-disabled' : ''}" onclick="changeGroupsPage(${state.groupsPage - 1})" title="Previous Page">‹</button>
+      `;
+
+      // Numbered page buttons (window of 5 around current)
+      const startPage = Math.max(1, state.groupsPage - 2);
+      const endPage = Math.min(totalPages, startPage + 4);
+
+      for (let p = startPage; p <= endPage; p++) {
+        buttonsHtml += `
+          <button class="join-item btn btn-xs ${p === state.groupsPage ? 'btn-active btn-primary font-bold' : ''}" onclick="changeGroupsPage(${p})">${p}</button>
+        `;
+      }
+
+      // Next and Last buttons
+      buttonsHtml += `
+        <button class="join-item btn btn-xs ${state.groupsPage === totalPages ? 'btn-disabled' : ''}" onclick="changeGroupsPage(${state.groupsPage + 1})" title="Next Page">›</button>
+        <button class="join-item btn btn-xs ${state.groupsPage === totalPages ? 'btn-disabled' : ''}" onclick="changeGroupsPage(${totalPages})" title="Last Page">»</button>
+      `;
+
+      paginationContainer.innerHTML = buttonsHtml;
+    }
+  }
+
+  if (pagedGroups.length === 0) {
     const emptyMsg = currentGroupStatusFilter === 'joined'
       ? 'No accepted groups yet. Click "📥 Import My Joined Groups" to sync groups you already belong to, or add one with "➕ Add Group by Link"!'
       : currentGroupStatusFilter === 'join_requested'
@@ -554,7 +624,7 @@ function renderGroups() {
     return;
   }
 
-  container.innerHTML = filtered.map(g => {
+  container.innerHTML = pagedGroups.map(g => {
     let rowHighlightClass = '';
     let selectStatusColor = 'select-info';
 

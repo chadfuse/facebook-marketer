@@ -57,7 +57,13 @@ async function searchGroupsForNiche(nicheId) {
       await page.waitForTimeout(3000);
 
       await humanSimulateBrowsing(page);
-      await page.waitForTimeout(1500);
+      
+      // Scroll multiple times to trigger Facebook's infinite scroll & load dozens of groups
+      for (let s = 0; s < 4; s++) {
+        await page.evaluate(() => window.scrollBy(0, 1200));
+        await page.waitForTimeout(1200);
+      }
+      await page.waitForTimeout(1000);
 
       const rawGroups = await page.evaluate(() => {
         const results = [];

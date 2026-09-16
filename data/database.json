@@ -44,7 +44,7 @@
       "status": "joined",
       "canPost": true,
       "createdAt": "2026-09-16T16:36:30.420Z",
-      "updatedAt": "2026-09-16T16:54:10.193Z",
+      "updatedAt": "2026-09-16T16:56:29.160Z",
       "lastPostDate": null,
       "postCount": 0
     }
@@ -52,6 +52,41 @@
   "postQueue": [],
   "postHistory": [],
   "logs": [
+    {
+      "id": "log-1789577789160-oa5dr",
+      "timestamp": "2026-09-16T16:56:29.160Z",
+      "type": "success",
+      "message": "Added group \"Architecture Jobs Philippines\" (https://www.facebook.com/groups/architecture.jobs.philippines/) as joined.",
+      "details": {}
+    },
+    {
+      "id": "log-1789577788783-x7rc1",
+      "timestamp": "2026-09-16T16:56:28.783Z",
+      "type": "warn",
+      "message": "Gemini API Key not set. Generating high-converting template fallback.",
+      "details": {}
+    },
+    {
+      "id": "log-1789577788782-ho974",
+      "timestamp": "2026-09-16T16:56:28.782Z",
+      "type": "warn",
+      "message": "Gemini API Key not set. Generating high-converting template fallback.",
+      "details": {}
+    },
+    {
+      "id": "log-1789577788781-cfbef",
+      "timestamp": "2026-09-16T16:56:28.781Z",
+      "type": "warn",
+      "message": "Gemini API Key not set. Generating high-converting template fallback.",
+      "details": {}
+    },
+    {
+      "id": "log-1789577788780-c3480",
+      "timestamp": "2026-09-16T16:56:28.780Z",
+      "type": "warn",
+      "message": "Gemini API Key not set. Generating high-converting template fallback.",
+      "details": {}
+    },
     {
       "id": "log-1789577650193-wscqm",
       "timestamp": "2026-09-16T16:54:10.193Z",
